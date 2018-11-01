@@ -3,6 +3,7 @@ package com.clickbus.service.service.dto;
 import com.clickbus.service.config.Constants;
 
 import com.clickbus.service.domain.Authority;
+import com.clickbus.service.domain.City;
 import com.clickbus.service.domain.User;
 
 import javax.validation.constraints.Email;
