@@ -37,7 +37,17 @@ public class CacheConfiguration {
             cm.createCache(com.clickbus.service.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(com.clickbus.service.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(com.clickbus.service.domain.User.class.getName() + ".authorities", jcacheConfiguration);
-            // jhipster-needle-ehcache-add-entry
+            
+            cm.createCache(com.clickbus.service.domain.Country.class.getName(), jcacheConfiguration);
+            cm.createCache(com.clickbus.service.domain.Country.class.getName() + ".states", jcacheConfiguration);
+            cm.createCache(com.clickbus.service.domain.State.class.getName(), jcacheConfiguration);
+            cm.createCache(com.clickbus.service.domain.State.class.getName() + ".cities", jcacheConfiguration);
+            cm.createCache(com.clickbus.service.domain.City.class.getName(), jcacheConfiguration);
+            cm.createCache(com.clickbus.service.domain.City.class.getName() + ".places", jcacheConfiguration);
+            cm.createCache(com.clickbus.service.domain.Place.class.getName(), jcacheConfiguration);
+            cm.createCache(com.clickbus.service.domain.Place.class.getName() + ".clientApplications", jcacheConfiguration);
+            cm.createCache(com.clickbus.service.domain.ClientApplication.class.getName(), jcacheConfiguration);
+            cm.createCache(com.clickbus.service.domain.ClientApplication.class.getName() + ".places", jcacheConfiguration);
         };
     }
 }
