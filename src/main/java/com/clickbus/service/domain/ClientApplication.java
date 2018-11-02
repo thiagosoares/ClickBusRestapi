@@ -55,20 +55,6 @@ public class ClientApplication extends AbstractAuditingEntity {
     @Column(name = "public_name", nullable = false)
     private String publicName;
 
-    @NotNull
-    @Column(name = "created_by", nullable = false)
-    private String createdBy;
-
-    @NotNull
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    @Column(name = "updated_by")
-    private String updatedBy;
-
-    @Column(name = "updated_at")
-    private Instant updatedAt;
-
     @ManyToMany(mappedBy = "clientApplications")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JsonIgnore

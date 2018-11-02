@@ -42,15 +42,15 @@
                 <constraints nullable="false" />
             </column>
 
-            <column name="created_at" type="datetime">
+            <column name="created_date" type="datetime">
                 <constraints nullable="false" />
             </column>
 
-            <column name="updated_by" type="varchar(255)">
+            <column name="last_modified_by" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
 
-            <column name="updated_at" type="datetime">
+            <column name="last_modified_date" type="datetime">
                 <constraints nullable="true" />
             </column>
 
@@ -60,8 +60,8 @@
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
-        <dropDefaultValue tableName="place" columnName="created_at" columnDataType="datetime"/>
-        <dropDefaultValue tableName="place" columnName="updated_at" columnDataType="datetime"/>
+        <dropDefaultValue tableName="place" columnName="created_date" columnDataType="datetime"/>
+        <dropDefaultValue tableName="place" columnName="last_modified_date" columnDataType="datetime"/>
         
         <createTable tableName="place_client_application">
             <column name="client_applications_id" type="bigint">
