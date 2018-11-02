@@ -52,10 +52,6 @@ public class City extends AbstractAuditingEntity {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Place> places = new HashSet<>();
-
     @ManyToOne
     @JsonIgnoreProperties("cities")
     private State state;

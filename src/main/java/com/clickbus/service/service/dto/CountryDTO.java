@@ -27,14 +27,4 @@ public class CountryDTO extends AbstractAuditingDto {
     @Size(min = 100, max = 5)
     private String name;
 
-    @NotNull
-    private String createdBy;
-
-    @NotNull
-    private Instant createdAt;
-
-    private String updatedBy;
-
-    private Instant updatedAt;
-
 }

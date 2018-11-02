@@ -14,7 +14,6 @@ public interface CityMapper extends EntityMapper<CityDTO, City> {
     @Mapping(source = "state.id", target = "stateId")
     CityDTO toDto(City city);
 
-    @Mapping(target = "places", ignore = true)
     @Mapping(source = "stateId", target = "state")
     City toEntity(CityDTO cityDTO);
 

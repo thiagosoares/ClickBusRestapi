@@ -30,14 +30,4 @@ public class ClientApplicationDTO extends AbstractAuditingDto {
     @NotNull
     private String publicName;
 
-    @NotNull
-    private String createdBy;
-
-    @NotNull
-    private Instant createdAt;
-
-    private String updatedBy;
-
-    private Instant updatedAt;
-
 }

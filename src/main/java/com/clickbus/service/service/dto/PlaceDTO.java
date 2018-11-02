@@ -38,16 +38,6 @@ public class PlaceDTO extends AbstractAuditingDto {
     @NotNull
     private String slug;
 
-    @NotNull
-    private String createdBy;
-
-    @NotNull
-    private Instant createdAt;
-
-    private String updatedBy;
-
-    private Instant updatedAt;
-
     private Set<ClientApplicationDTO> clientApplications = new HashSet<>();
 
     private Long cityId;
