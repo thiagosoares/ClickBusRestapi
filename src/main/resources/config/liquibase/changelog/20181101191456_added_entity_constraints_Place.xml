@@ -24,6 +24,13 @@
                                  constraintName="fk_place_city_id"
                                  referencedColumnNames="id"
                                  referencedTableName="city"/>
+    
+        <addUniqueConstraint tableName="place"
+                             columnNames="slug"
+                             constraintName="place_slug_uidx"
+                             deferrable="true"
+                             disabled="true"
+                             initiallyDeferred="true"/>
 
     </changeSet>
 </databaseChangeLog>
