@@ -24,7 +24,7 @@ public class CityDTO extends AbstractAuditingDto {
     private Long id;
 
     @NotNull
-    @Size(min = 100, max = 5)
+    @Size(min = 5, max = 100)
     private String name;
 
     private Long stateId;

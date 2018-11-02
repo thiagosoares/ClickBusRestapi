@@ -26,16 +26,18 @@ public class PlaceDTO extends AbstractAuditingDto {
     private Long id;
 
     @NotNull
-    @Size(min = 255, max = 5)
+    @Size(min = 5, max = 255)
     private String name;
 
     @NotNull
+    @Size(min = 5, max = 255)
     private String terminalName;
 
     @NotNull
     private String address;
 
     @NotNull
+    @Size(min = 5, max = 255)
     private String slug;
 
     private Set<ClientApplicationDTO> clientApplications = new HashSet<>();

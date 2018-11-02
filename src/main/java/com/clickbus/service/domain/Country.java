@@ -50,5 +50,11 @@ public class Country extends AbstractAuditingEntity {
     @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<State> states = new HashSet<>();
+
+
+    public Country name(String name) {
+        this.name = name;
+        return this;
+    }
     
 }
