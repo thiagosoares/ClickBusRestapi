@@ -1,6 +1,7 @@
 package com.clickbus.service.domain;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -36,9 +37,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class Country extends AbstractAuditingEntity {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4651071775756584619L;
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -50,11 +51,6 @@ public class Country extends AbstractAuditingEntity {
     @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<State> states = new HashSet<>();
-
-
-    public Country name(String name) {
-        this.name = name;
-        return this;
-    }
     
+
 }

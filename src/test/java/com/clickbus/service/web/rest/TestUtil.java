@@ -12,10 +12,13 @@ import org.springframework.http.MediaType;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Utility class for testing REST controllers.
@@ -118,7 +121,7 @@ public class TestUtil {
         T domainObject2 = clazz.getConstructor().newInstance();
         assertThat(domainObject1).isNotEqualTo(domainObject2);
         // HashCodes are equals because the objects are not persisted yet
-        assertThat(domainObject1.hashCode()).isEqualTo(domainObject2.hashCode());
+        assertThat(domainObject1.hashCode()).isEqualTo(domainObject2.hashCode()); // TODO Isso não se entendeu com o HashCode do Lombok
     }
 
     /**
@@ -131,5 +134,36 @@ public class TestUtil {
         registrar.setUseIsoFormat(true);
         registrar.registerFormatters(dfcs);
         return dfcs;
+    }
+    
+    
+    /**
+     * 
+     * @param in
+     * @return
+     * @throws Exception
+     */
+    public static Boolean compareDatesMinute(String in) throws Exception {
+    	Instant truncatedIn = Instant.parse(in).truncatedTo(ChronoUnit.MINUTES);
+    	
+    	return compareDates(truncatedIn, ChronoUnit.MINUTES);
+    }
+    
+    
+    public static Boolean compareDatesMinutes(Instant in) throws Exception {
+    	return compareDates(in, ChronoUnit.MINUTES);
+    }
+    
+    public static Boolean compareDates(Instant in, ChronoUnit unit) throws Exception {
+
+        Instant truncatedIn = in.truncatedTo(unit);
+        Instant truncatedNow = Instant.now().truncatedTo(unit);
+        
+        return truncatedIn.equals(truncatedNow);
+        
+    }
+    
+    public static Instant getInstantMinute() {
+    	return Instant.now().truncatedTo(ChronoUnit.MINUTES);
     }
 }
