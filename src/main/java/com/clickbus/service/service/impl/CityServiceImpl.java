@@ -3,6 +3,7 @@ package com.clickbus.service.service.impl;
 import com.clickbus.service.service.CityService;
 import com.clickbus.service.domain.City;
 import com.clickbus.service.repository.CityRepository;
+import com.clickbus.service.repository.StateRepository;
 import com.clickbus.service.repository.search.CitySearchRepository;
 import com.clickbus.service.service.dto.CityDTO;
 import com.clickbus.service.service.mapper.CityMapper;
@@ -28,7 +29,7 @@ public class CityServiceImpl implements CityService {
     private final Logger log = LoggerFactory.getLogger(CityServiceImpl.class);
 
     private CityRepository cityRepository;
-
+    
     private CityMapper cityMapper;
 
     private CitySearchRepository citySearchRepository;
@@ -50,6 +51,7 @@ public class CityServiceImpl implements CityService {
         log.debug("Request to save City : {}", cityDTO);
 
         City city = cityMapper.toEntity(cityDTO);
+        
         city = cityRepository.save(city);
         CityDTO result = cityMapper.toDto(city);
         citySearchRepository.save(city);

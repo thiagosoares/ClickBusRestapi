@@ -46,7 +46,7 @@ public class State extends AbstractAuditingEntity {
     private Long id;
 
     @NotNull
-    @Size(min = 5, max = 100)
+    @Size(min = 2, max = 100)
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 

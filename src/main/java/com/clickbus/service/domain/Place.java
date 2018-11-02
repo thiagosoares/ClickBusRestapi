@@ -52,17 +52,17 @@ public class Place extends AbstractAuditingEntity {
     private Long id;
 
     @NotNull
-    @Size(min = 5, max = 255)
+    @Size(min = 2, max = 255)
     @Column(name = "name", length = 255, nullable = false)
     private String name;
       
     @NotNull
-    @Size(min = 5, max = 255)
+    @Size(min = 2, max = 255)
     @Column(name = "slug", length = 255, nullable = false, unique = true)
     private String slug;
 
     @NotNull
-    @Size(min = 5, max = 255)
+    @Size(min = 2, max = 255)
     @Column(name = "terminal_name", length = 255, nullable = false)
     private String terminalName;
 
