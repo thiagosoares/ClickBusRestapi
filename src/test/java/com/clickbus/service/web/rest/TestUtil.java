@@ -143,7 +143,7 @@ public class TestUtil {
      * @return
      * @throws Exception
      */
-    public static Boolean compareDatesMinute(String in) throws Exception {
+    public static Boolean compareDatesMinutes(String in) throws Exception {
     	Instant truncatedIn = Instant.parse(in).truncatedTo(ChronoUnit.MINUTES);
     	
     	return compareDates(truncatedIn, ChronoUnit.MINUTES);

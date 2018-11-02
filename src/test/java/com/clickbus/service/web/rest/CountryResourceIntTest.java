@@ -359,9 +359,8 @@ public class CountryResourceIntTest {
         assertThat(country1).isNotEqualTo(country2);
         country1.setId(null);
         assertThat(country1).isNotEqualTo(country2);
-    }*/
+    }
 
-    /* TODO Esse teste não passou por causa do @EqualsAndHashCode do Lombok    
  	@Test
     @Transactional
     public void dtoEqualsVerifier() throws Exception {
