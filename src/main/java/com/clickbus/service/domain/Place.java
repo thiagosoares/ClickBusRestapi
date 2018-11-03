@@ -28,7 +28,9 @@ import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Task entity.
@@ -39,10 +41,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "place", uniqueConstraints = @UniqueConstraint(columnNames = "slug", name = "slug_uidx"))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "place")
-@Data
+
+@Data 
+@EqualsAndHashCode(callSuper = true, exclude = {"clientApplications", "city"}) 
+// @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class Place extends AbstractAuditingEntity {
 
     private static final long serialVersionUID = 1L;

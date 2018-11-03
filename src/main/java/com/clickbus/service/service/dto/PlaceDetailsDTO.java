@@ -6,6 +6,8 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,26 +16,42 @@ import lombok.NoArgsConstructor;
 /**
  * A DTO for the Place entity.
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class PlaceDetailsDTO extends AbstractAuditingDto {
+//@Data
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@EqualsAndHashCode(callSuper = true, exclude = "clientIds")
+public interface PlaceDetailsDTO {
 
-    private static final long serialVersionUID = 2346312361734613231L;
+    public Long getId();
 
-    private Long id;
+    public String getName();
 
-    private String name;
+    public String getSlug();
 
-    private String slug;
-
-    private CityDTO city;
+    public CityID getCity();
     
-    private StateDTO state;
+    @Value("#{target.city.state}")
+    public StateID getState();
     
-    private CountryDTO country;
+    @Value("#{target.city.state.country}")
+    public CountryID getCountry();
     
-    private Set<ClientApplicationDTO> clientIds = new HashSet<>(); 
+    /*
+    //public Set<Long> getClientIds();
+    */
+       
+    interface CityID {
+    	public String getName();
+    }
+    
+    interface StateID {
+    	//@Value("#{state.name}")
+    	public String getName();
+    }
+    
+    
+    interface CountryID {
+    	public String getName();
+    }
 
 }

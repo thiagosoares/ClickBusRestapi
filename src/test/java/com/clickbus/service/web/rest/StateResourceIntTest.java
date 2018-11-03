@@ -1,7 +1,7 @@
 package com.clickbus.service.web.rest;
 
 import com.clickbus.service.ClickbusApp;
-
+import com.clickbus.service.domain.Country;
 import com.clickbus.service.domain.State;
 import com.clickbus.service.repository.StateRepository;
 import com.clickbus.service.repository.search.StateSearchRepository;
@@ -51,8 +51,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ClickbusApp.class)
 public class StateResourceIntTest {
 
-    private static final String DEFAULT_NAME = "AAAAA";
-    private static final String UPDATED_NAME = "BBBBB";
+    public static final String DEFAULT_NAME = "STATE AAAAA";
+    private static final String UPDATED_NAME = "STATE BBBBB";
 
     private static final String DEFAULT_CREATED_BY = "system";
     private static final String UPDATED_CREATED_BY = "system";  // TODO Here would be User or Admin
@@ -117,8 +117,15 @@ public class StateResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static State createEntity(EntityManager em) {
-        State state = new State();
+        
+    	Country country = CountryResourceIntTest.createEntity(em);
+    	em.persist(country);
+    	em.flush();
+    	
+    	State state = new State();
         state.setName(DEFAULT_NAME);
+        state.setCountry(country);
+        
         return state;
     }
 

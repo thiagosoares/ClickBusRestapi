@@ -42,7 +42,15 @@ public interface PlaceService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<PlaceDetailsDTO> findOne(Long id);
+    Optional<PlaceDTO> findOne(Long id);
+    
+    /**
+     * Get the "id" place.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    Optional<PlaceDetailsDTO> findOneDetails(Long id);
 
     /**
      * Delete the "id" place.

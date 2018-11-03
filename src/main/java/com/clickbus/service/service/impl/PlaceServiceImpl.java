@@ -73,8 +73,19 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional(readOnly = true)
     public Page<PlaceDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Places");
+        
+        /*Page<Place> list = placeRepository.findAll(pageable);
+        
+        Page<PlaceDTO> listDto = list.map(placeMapper::toDto);
+        
+        for(PlaceDTO dto : listDto.getContent()) {
+        	System.out.println(dto.getName());
+        	System.out.println(dto.getClientApplications());
+        }
+        
+        return listDto;*/
         return placeRepository.findAll(pageable)
-            .map(placeMapper::toDto);
+        					  .map(placeMapper::toDto);
     }
 
     /**
@@ -83,7 +94,21 @@ public class PlaceServiceImpl implements PlaceService {
      * @return the list of entities
      */
     public Page<PlaceDTO> findAllWithEagerRelationships(Pageable pageable) {
-        return placeRepository.findAllWithEagerRelationships(pageable).map(placeMapper::toDto);
+    	
+    	/*
+    	Page<Place> list = placeRepository.findAllWithEagerRelationships(pageable);
+        
+        Page<PlaceDTO> listDto = list.map(placeMapper::toDto);
+        
+        for(PlaceDTO dto : listDto.getContent()) {
+        	System.out.println(dto.getName());
+        	System.out.println(dto.getClientApplications());
+        }
+        
+        return listDto;*/
+    	
+        return placeRepository.findAllWithEagerRelationships(pageable)
+        					  .map(placeMapper::toDto);
     }
     
 
@@ -95,21 +120,27 @@ public class PlaceServiceImpl implements PlaceService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<PlaceDetailsDTO> findOne(Long id) {
+    public Optional<PlaceDTO> findOne(Long id) {
+        log.debug("Request to get Place : {}", id);
+        return placeRepository.findOneWithEagerRelationships(id)
+                .map(placeMapper::toDto);
+    }
+
+    /**
+     * Get one place with details by id.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<PlaceDetailsDTO> findOneDetails(Long id) {
         log.debug("Request to get Place : {}", id);
         
-        Place place = placeRepository.findOneWithEagerRelationships(id)
+        PlaceDetailsDTO place = placeRepository.findOneWithEagerRelationshipsDetails(id)
         		.orElseThrow(() -> new BadRequestAlertException("A new city cannot already have an ID", "PLACE", "idnotexists"));
         
-        
-        PlaceDetailsDTO placeDetails = new PlaceDetailsDTO();
-        placeDetails.setName(place.getName());
-        placeDetails.setSlug(place.getSlug());
-        placeDetails.setCity(new CityDTO(place.getCity().getId()));
-        placeDetails.setState(new StateDTO(place.getCity().getState().getId()));
-        placeDetails.setCountry(new CountryDTO(place.getCity().getState().getCountry().getId()));
-        
-        return Optional.ofNullable(placeDetails);
+        return Optional.ofNullable(place);
     }
 
     /**

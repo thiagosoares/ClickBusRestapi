@@ -1,6 +1,8 @@
 package com.clickbus.service.repository;
 
 import com.clickbus.service.domain.Place;
+import com.clickbus.service.service.dto.PlaceDetailsDTO;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -27,4 +29,8 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Query("select place from Place place left join fetch place.clientApplications where place.id =:id")
     Optional<Place> findOneWithEagerRelationships(@Param("id") Long id);
 
+    //, place.city, place.city.state, place.city.state.country
+    @Query("select place "
+    		+ " FROM Place place where place.id =:id")
+    Optional<PlaceDetailsDTO> findOneWithEagerRelationshipsDetails(@Param("id") Long id);
 }

@@ -7,18 +7,23 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.clickbus.service.domain.City;
+import com.clickbus.service.domain.ClientApplication;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * A DTO for the Place entity.
  */
-@Data
+@Data 
+@EqualsAndHashCode(callSuper = true, exclude = "clientApplications")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class PlaceDTO extends AbstractAuditingDto {
 
     private static final long serialVersionUID = 2346312361734613231L;

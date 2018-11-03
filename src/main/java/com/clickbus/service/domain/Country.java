@@ -19,6 +19,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,7 +36,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "states")
 public class Country extends AbstractAuditingEntity {
 
 	private static final long serialVersionUID = -4651071775756584619L;
@@ -46,10 +48,11 @@ public class Country extends AbstractAuditingEntity {
     @NotNull
     @Size(min = 2, max = 100)
     @Column(name = "name", length = 100, nullable = false)
-    private String name;
+    private String name;	
 
     @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JsonIgnoreProperties("states")
     private Set<State> states = new HashSet<>();
     
 

@@ -54,11 +54,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ClickbusApp.class)
 public class CityResourceIntTest {
 
-    private static final String DEFAULT_NAME = "AAAAA";
-    private static final String UPDATED_NAME = "BBBBB";
+    public static final String DEFAULT_NAME = "CITY AAAAA";
+    private static final String UPDATED_NAME = "CITY BBBBB";
     
-    private static final String DEFAULT_STATE_NAME = "AAAAA";
-    private static final String UPDATED_STATE_NAME = "BBBBB";
+    private static final String DEFAULT_STATE_NAME = "STATE AAAAA";
+    private static final String UPDATED_STATE_NAME = "STATE BBBBB";
 
     private static final String DEFAULT_CREATED_BY = "system";
     private static final String UPDATED_CREATED_BY = "system"; // TODO Here would be User or Admin
@@ -127,8 +127,8 @@ public class CityResourceIntTest {
         city.setName(DEFAULT_NAME);
 
         // Add required entity
-        State state = new State();
-        state.setName(DEFAULT_STATE_NAME);
+        State state = StateResourceIntTest.createEntity(em);
+        // state.setName(DEFAULT_STATE_NAME);
         em.persist(state);
         em.flush();
         city.setState(state);

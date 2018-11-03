@@ -163,8 +163,15 @@ public class PlaceResourceIntTest {
         clientApplication.setPublicName(DEFAULT_PUBLIC_NAME);
         em.persist(clientApplication);
         em.flush();
-        
         place.getClientApplications().add(new ClientApplication(clientApplication.getId()));
+        
+        ClientApplication clientApplication2 = new ClientApplication();
+        clientApplication2.setName(DEFAULT_NAME+"2");
+        clientApplication2.setPublicName(DEFAULT_PUBLIC_NAME+"2");
+        em.persist(clientApplication2);
+        em.flush();
+        place.getClientApplications().add(new ClientApplication(clientApplication2.getId()));
+        
         
         return place;
     }
@@ -378,6 +385,28 @@ public class PlaceResourceIntTest {
             .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY.toString()))
             // .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()))
             .andExpect(jsonPath("$.lastModifiedBy").value(DEFAULT_UPDATED_BY.toString()))
+            // .andExpect(jsonPath("$.updatedAt").value(DEFAULT_UPDATED_AT.toString()))
+            ;
+    }
+    
+    @Test
+    @Transactional
+    public void getPlaceDetails() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get the place
+        restPlaceMockMvc.perform(get("/api/places/{id}/details", place.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.id").value(place.getId().intValue()))
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
+            // .andExpect(jsonPath("$.terminalName").value(DEFAULT_TERMINAL_NAME.toString()))
+            // .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS.toString()))
+            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
+            // .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY.toString()))
+            // .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()))
+            // .andExpect(jsonPath("$.lastModifiedBy").value(DEFAULT_UPDATED_BY.toString()))
             // .andExpect(jsonPath("$.updatedAt").value(DEFAULT_UPDATED_AT.toString()))
             ;
     }

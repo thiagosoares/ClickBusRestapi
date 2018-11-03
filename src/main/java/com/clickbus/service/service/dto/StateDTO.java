@@ -32,6 +32,7 @@ public class StateDTO extends AbstractAuditingDto {
 	public StateDTO(Long id) {
 		super();
 		this.id = id;
+		this.name = null;
 	}
     
 }

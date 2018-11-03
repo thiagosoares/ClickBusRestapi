@@ -8,15 +8,17 @@ import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * A DTO for the ClientApplication entity.
  */
-@Data
+@Data 
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class ClientApplicationDTO extends AbstractAuditingDto {
 
     private static final long serialVersionUID = -2196473443547343174L;
@@ -30,4 +32,5 @@ public class ClientApplicationDTO extends AbstractAuditingDto {
     @NotNull
     private String publicName;
 
+    
 }

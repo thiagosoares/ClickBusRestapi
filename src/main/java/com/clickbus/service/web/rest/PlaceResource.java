@@ -114,11 +114,27 @@ public class PlaceResource {
      * @param id the id of the placeDTO to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the placeDTO, or with status 404 (Not Found)
      */
-    @GetMapping("/places/{id}")
+    @GetMapping("/places/{id:[0-9]}")
     @Timed
-    public ResponseEntity<PlaceDetailsDTO> getPlace(@PathVariable Long id) {
+    public ResponseEntity<PlaceDTO> getPlace(@PathVariable Long id) {
         log.debug("REST request to get Place : {}", id);
-        Optional<PlaceDetailsDTO> placeDTO = placeService.findOne(id);
+        Optional<PlaceDTO> placeDTO = placeService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(placeDTO);
+    }
+    
+    
+    
+    /**
+     * GET  /places/:id/details : get the "id" place with yours details like, country, city, state, clientIds.
+     *
+     * @param id the id of the placeDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the placeDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/places/{id:[0-9]}/details")
+    @Timed
+    public ResponseEntity<PlaceDetailsDTO> getPlaceDetails(@PathVariable Long id) {
+        log.debug("REST request to get Place : {}", id);
+        Optional<PlaceDetailsDTO> placeDTO = placeService.findOneDetails(id);
         return ResponseUtil.wrapOrNotFound(placeDTO);
     }
 

@@ -37,7 +37,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "places")
 public class ClientApplication extends AbstractAuditingEntity {
 
     private static final long serialVersionUID = 1L;

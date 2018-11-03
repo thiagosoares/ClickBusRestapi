@@ -53,8 +53,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = ClickbusApp.class)
 public class CountryResourceIntTest {
 
-    private static final String DEFAULT_NAME = "AAAAA";
-    private static final String UPDATED_NAME = "BBBBB";
+    public static final String DEFAULT_NAME = "COUNTRY AAAAA";
+    private static final String UPDATED_NAME = "COUNTRY BBBBB";
 
     private static final String DEFAULT_CREATED_BY = "system";
     private static final String UPDATED_CREATED_BY = "system"; // TODO Here would be User or Admin
