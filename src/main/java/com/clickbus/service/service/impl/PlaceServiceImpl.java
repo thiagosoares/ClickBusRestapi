@@ -4,8 +4,14 @@ import com.clickbus.service.service.PlaceService;
 import com.clickbus.service.domain.Place;
 import com.clickbus.service.repository.PlaceRepository;
 import com.clickbus.service.repository.search.PlaceSearchRepository;
+import com.clickbus.service.service.dto.CityDTO;
+import com.clickbus.service.service.dto.CountryDTO;
 import com.clickbus.service.service.dto.PlaceDTO;
+import com.clickbus.service.service.dto.PlaceDetailsDTO;
+import com.clickbus.service.service.dto.StateDTO;
 import com.clickbus.service.service.mapper.PlaceMapper;
+import com.clickbus.service.web.rest.errors.BadRequestAlertException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +56,7 @@ public class PlaceServiceImpl implements PlaceService {
         log.debug("Request to save Place : {}", placeDTO);
 
         Place place = placeMapper.toEntity(placeDTO);
+        
         place = placeRepository.save(place);
         PlaceDTO result = placeMapper.toDto(place);
         placeSearchRepository.save(place);
@@ -88,10 +95,21 @@ public class PlaceServiceImpl implements PlaceService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<PlaceDTO> findOne(Long id) {
+    public Optional<PlaceDetailsDTO> findOne(Long id) {
         log.debug("Request to get Place : {}", id);
-        return placeRepository.findOneWithEagerRelationships(id)
-            .map(placeMapper::toDto);
+        
+        Place place = placeRepository.findOneWithEagerRelationships(id)
+        		.orElseThrow(() -> new BadRequestAlertException("A new city cannot already have an ID", "PLACE", "idnotexists"));
+        
+        
+        PlaceDetailsDTO placeDetails = new PlaceDetailsDTO();
+        placeDetails.setName(place.getName());
+        placeDetails.setSlug(place.getSlug());
+        placeDetails.setCity(new CityDTO(place.getCity().getId()));
+        placeDetails.setState(new StateDTO(place.getCity().getState().getId()));
+        placeDetails.setCountry(new CountryDTO(place.getCity().getState().getCountry().getId()));
+        
+        return Optional.ofNullable(placeDetails);
     }
 
     /**

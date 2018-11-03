@@ -27,4 +27,9 @@ public class CountryDTO extends AbstractAuditingDto {
     @Size(min = 2, max = 100)
     private String name;
 
+	public CountryDTO(Long id) {
+		super();
+		this.id = id;
+	}
+    
 }

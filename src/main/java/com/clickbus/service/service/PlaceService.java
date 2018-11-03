@@ -1,6 +1,7 @@
 package com.clickbus.service.service;
 
 import com.clickbus.service.service.dto.PlaceDTO;
+import com.clickbus.service.service.dto.PlaceDetailsDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +42,7 @@ public interface PlaceService {
      * @param id the id of the entity
      * @return the entity
      */
-    Optional<PlaceDTO> findOne(Long id);
+    Optional<PlaceDetailsDTO> findOne(Long id);
 
     /**
      * Delete the "id" place.

@@ -1,6 +1,7 @@
 package com.clickbus.service.service.dto;
 
-import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -11,30 +12,28 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * A DTO for the City entity.
+ * A DTO for the Place entity.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class CityDTO extends AbstractAuditingDto {
+public class PlaceDetailsDTO extends AbstractAuditingDto {
 
-    private static final long serialVersionUID = -6760804659385009864L;
+    private static final long serialVersionUID = 2346312361734613231L;
 
     private Long id;
 
-    @NotNull
-    @Size(min = 2, max = 100)
     private String name;
 
-    @NotNull
-    private Long stateId;
-    
-    private String stateName;
+    private String slug;
 
-	public CityDTO(Long id) {
-		super();
-		this.id = id;
-	}
+    private CityDTO city;
     
+    private StateDTO state;
+    
+    private CountryDTO country;
+    
+    private Set<ClientApplicationDTO> clientIds = new HashSet<>(); 
+
 }

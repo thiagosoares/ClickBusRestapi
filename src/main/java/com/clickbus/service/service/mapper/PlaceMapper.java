@@ -16,7 +16,7 @@ public interface PlaceMapper extends EntityMapper<PlaceDTO, Place> {
 
     @Mapping(source = "cityId", target = "city")
     Place toEntity(PlaceDTO placeDTO);
-
+    
     default Place fromId(Long id) {
         if (id == null) {
             return null;

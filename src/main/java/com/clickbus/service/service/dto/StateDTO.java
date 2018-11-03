@@ -29,4 +29,9 @@ public class StateDTO extends AbstractAuditingDto {
 
     private Long countryId;
 
+	public StateDTO(Long id) {
+		super();
+		this.id = id;
+	}
+    
 }

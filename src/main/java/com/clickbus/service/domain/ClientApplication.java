@@ -60,5 +60,9 @@ public class ClientApplication extends AbstractAuditingEntity {
     @JsonIgnore
     private Set<Place> places = new HashSet<>();
 
-    
+	public ClientApplication(Long id) {
+		super();
+		this.id = id;
+	}
+
 }

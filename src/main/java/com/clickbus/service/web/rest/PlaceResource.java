@@ -6,6 +6,8 @@ import com.clickbus.service.web.rest.errors.BadRequestAlertException;
 import com.clickbus.service.web.rest.util.HeaderUtil;
 import com.clickbus.service.web.rest.util.PaginationUtil;
 import com.clickbus.service.service.dto.PlaceDTO;
+import com.clickbus.service.service.dto.PlaceDetailsDTO;
+
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,9 +116,9 @@ public class PlaceResource {
      */
     @GetMapping("/places/{id}")
     @Timed
-    public ResponseEntity<PlaceDTO> getPlace(@PathVariable Long id) {
+    public ResponseEntity<PlaceDetailsDTO> getPlace(@PathVariable Long id) {
         log.debug("REST request to get Place : {}", id);
-        Optional<PlaceDTO> placeDTO = placeService.findOne(id);
+        Optional<PlaceDetailsDTO> placeDTO = placeService.findOne(id);
         return ResponseUtil.wrapOrNotFound(placeDTO);
     }
 
