@@ -1,25 +1,18 @@
 package com.clickbus.service.service.dto;
 
-import java.util.HashSet;
 import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  * A DTO for the Place entity.
  */
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@EqualsAndHashCode(callSuper = true, exclude = "clientIds")
+@JsonIgnoreProperties("clients")
+@JsonPropertyOrder({"id", "name", "slug", "city", "state", "country", "clientIds"})
 public interface PlaceDetailsDTO {
 
     public Long getId();
@@ -36,22 +29,27 @@ public interface PlaceDetailsDTO {
     @Value("#{target.city.state.country}")
     public CountryID getCountry();
     
-    /*
-    //public Set<Long> getClientIds();
-    */
+    @Value("#{target.clientApplications}")
+    public Set<ClientID> getClients();
        
+    default Set<Long> getClientIds() {
+        return getClients().stream().map(ClientID::getId).collect(Collectors.toSet());
+    }
+    
     interface CityID {
     	public String getName();
     }
     
     interface StateID {
-    	//@Value("#{state.name}")
     	public String getName();
     }
     
-    
     interface CountryID {
     	public String getName();
+    }
+    
+    interface ClientID {
+    	public Long getId();
     }
 
 }

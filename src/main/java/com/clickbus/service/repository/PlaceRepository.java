@@ -30,7 +30,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     Optional<Place> findOneWithEagerRelationships(@Param("id") Long id);
 
     //, place.city, place.city.state, place.city.state.country
-    @Query("select place "
-    		+ " FROM Place place where place.id =:id")
+    @Query("select place from Place place where place.id =:id")
     Optional<PlaceDetailsDTO> findOneWithEagerRelationshipsDetails(@Param("id") Long id);
 }

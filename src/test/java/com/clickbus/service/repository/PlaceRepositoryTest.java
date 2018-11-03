@@ -67,14 +67,15 @@ public class PlaceRepositoryTest {
         clientApplication.setPublicName(DEFAULT_PUBLIC_NAME);
         em.persist(clientApplication);
         em.flush();
-        place.getClientApplications().add(new ClientApplication(clientApplication.getId()));
+        //place.getClientApplications().add(new ClientApplication(clientApplication.getId()));
+        place.getClientApplications().add(clientApplication);
         
         ClientApplication clientApplication2 = new ClientApplication();
         clientApplication2.setName(DEFAULT_NAME+"2");
         clientApplication2.setPublicName(DEFAULT_PUBLIC_NAME+"2");
         em.persist(clientApplication2);
         em.flush();
-        place.getClientApplications().add(new ClientApplication(clientApplication2.getId()));
+        place.getClientApplications().add(clientApplication2);
         
         em.persist(place);
         
@@ -101,7 +102,8 @@ public class PlaceRepositoryTest {
 		System.out.println("STATE " + testPlace.getState().getName());
 		System.out.println("COUNTRY " + testPlace.getCountry().getName());
 
-		System.out.println(testPlace.getSlug());
+		System.out.println("<<<>>>>>");
+		System.out.println(testPlace.getClientIds());
 		
 		
 		assertThat(testPlace.getName()).isEqualTo(DEFAULT_NAME);
