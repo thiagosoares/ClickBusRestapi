@@ -97,12 +97,6 @@ public class PlaceRepositoryTest {
 		
 		PlaceDetailsDTO testPlace = this.repository.findOneWithEagerRelationshipsDetails(this.place.getId()).orElseThrow(() -> new Exception());
 		
-		System.out.println(testPlace.getId() +""+testPlace.getName()+""+testPlace.getSlug());
-		System.out.println("CITY " + testPlace.getCity().getName());
-		System.out.println("STATE " + testPlace.getState().getName());
-		System.out.println("COUNTRY " + testPlace.getCountry().getName());
-
-		System.out.println("<<<>>>>>");
 		System.out.println(testPlace.getClientIds());
 		
 		
@@ -112,7 +106,7 @@ public class PlaceRepositoryTest {
         assertThat(testPlace.getState().getName()).isEqualTo(StateResourceIntTest.DEFAULT_NAME);
         assertThat(testPlace.getCountry().getName()).isEqualTo(CountryResourceIntTest.DEFAULT_NAME);
 		
-		// assertThat(, is(empty()));
+		assertThat(testPlace.getClientIds(), is(empty()));
 	}
 
 	@Test

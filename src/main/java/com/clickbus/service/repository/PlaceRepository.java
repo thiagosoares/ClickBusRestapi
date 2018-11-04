@@ -29,7 +29,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Query("select place from Place place left join fetch place.clientApplications where place.id =:id")
     Optional<Place> findOneWithEagerRelationships(@Param("id") Long id);
 
-    //, place.city, place.city.state, place.city.state.country
     @Query("select place from Place place where place.id =:id")
     Optional<PlaceDetailsDTO> findOneWithEagerRelationshipsDetails(@Param("id") Long id);
 }
