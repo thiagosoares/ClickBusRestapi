@@ -4,7 +4,7 @@ import { Router, ActivatedRouteSnapshot, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
 @Component({
-    selector: 'cd-main',
+    selector: 'jhi-main',
     templateUrl: './main.component.html'
 })
 export class MainComponent implements OnInit {

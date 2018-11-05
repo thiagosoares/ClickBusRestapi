@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'cd-docs',
+    selector: 'jhi-docs',
     templateUrl: './docs.component.html'
 })
 export class DocsComponent {

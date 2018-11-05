@@ -7,18 +7,7 @@ import { adminState } from './admin';
 const LAYOUT_ROUTES = [navbarRoute];
 
 @NgModule({
-    imports: [
-        RouterModule.forRoot(
-            [
-                ...LAYOUT_ROUTES
-                // {
-                //     path: '',
-                //     loadChildren: './admin/admin.module#ClickbusAdminModule'
-                // }
-            ],
-            { useHash: true, enableTracing: DEBUG_INFO_ENABLED }
-        )
-    ],
+    imports: [RouterModule.forRoot([...LAYOUT_ROUTES], { useHash: true, enableTracing: DEBUG_INFO_ENABLED })],
     exports: [RouterModule]
 })
 export class ClickbusAppRoutingModule {}
