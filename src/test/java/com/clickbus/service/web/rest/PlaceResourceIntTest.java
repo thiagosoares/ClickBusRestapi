@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,7 @@ import com.clickbus.service.domain.ClientApplication;
 import com.clickbus.service.domain.Place;
 import com.clickbus.service.repository.PlaceRepository;
 import com.clickbus.service.repository.search.PlaceSearchRepository;
+import com.clickbus.service.service.ClientApplicationService;
 import com.clickbus.service.service.PlaceService;
 import com.clickbus.service.service.dto.ClientApplicationDTO;
 import com.clickbus.service.service.dto.PlaceDTO;
@@ -103,6 +105,9 @@ public class PlaceResourceIntTest {
 
     @Autowired
     private PlaceService placeService;
+    
+    @Autowired
+    private ClientApplicationService clientApplicationService;
 
     /**
      * This repository is mocked in the com.clickbus.service.repository.search test package.
@@ -131,7 +136,7 @@ public class PlaceResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PlaceResource placeResource = new PlaceResource(placeService);
+        final PlaceResource placeResource = new PlaceResource(placeService, clientApplicationService);
         this.restPlaceMockMvc = MockMvcBuilders.standaloneSetup(placeResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -312,7 +317,33 @@ public class PlaceResourceIntTest {
         List<Place> placeList = placeRepository.findAll();
         assertThat(placeList).hasSize(databaseSizeBeforeTest);
     }
+    
+    @Test
+    @Transactional
+    public void createPlaceWithExistingSlug() throws Exception {
+    	
+    	// Initialize the database
+        placeRepository.saveAndFlush(place);
+    	
+        int databaseSizeBeforeCreate = placeRepository.findAll().size();
 
+        // Create the Place with an existing SLUG
+        place.setSlug(DEFAULT_SLUG);
+        PlaceDTO placeDTO = placeMapper.toDto(place);
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restPlaceMockMvc.perform(post("/api/places")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(placeDTO)))
+            .andExpect(status().isBadRequest());
+
+        // Validate the Place in the database
+        List<Place> placeList = placeRepository.findAll();
+        assertThat(placeList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Place in Elasticsearch
+        verify(mockPlaceSearchRepository, times(0)).save(place);
+    }
 
     @Test
     @Transactional
@@ -336,8 +367,31 @@ public class PlaceResourceIntTest {
             ;
     }
     
+    @Test
+    @Transactional
+    public void getAllPlacesEager() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get all the placeList
+        restPlaceMockMvc.perform(get("/api/places?eagerload=true&sort=id,desc"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(place.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
+            .andExpect(jsonPath("$.[*].city.name").value(hasItem(CityResourceIntTest.DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].state.name").value(hasItem(StateResourceIntTest.DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].country.name").value(hasItem(CountryResourceIntTest.DEFAULT_NAME)))
+            // .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY.toString())))
+            // .andExpect(jsonPath("$.[*].createdDate").value(hasItem(DEFAULT_CREATED_AT.toString())))
+            // .andExpect(jsonPath("$.[*].lastModifiedBy").value(hasItem(DEFAULT_UPDATED_BY.toString())))
+            // .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(DEFAULT_UPDATED_AT.toString())))
+            ;
+    }
+    
     public void getAllPlacesWithEagerRelationshipsIsEnabled() throws Exception {
-        PlaceResource placeResource = new PlaceResource(placeServiceMock);
+        PlaceResource placeResource = new PlaceResource(placeServiceMock, clientApplicationService);
         when(placeServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restPlaceMockMvc = MockMvcBuilders.standaloneSetup(placeResource)
@@ -353,7 +407,7 @@ public class PlaceResourceIntTest {
     }
 
     public void getAllPlacesWithEagerRelationshipsIsNotEnabled() throws Exception {
-        PlaceResource placeResource = new PlaceResource(placeServiceMock);
+        PlaceResource placeResource = new PlaceResource(placeServiceMock, clientApplicationService);
             when(placeServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restPlaceMockMvc = MockMvcBuilders.standaloneSetup(placeResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -372,7 +426,7 @@ public class PlaceResourceIntTest {
     public void getPlace() throws Exception {
         // Initialize the database
         placeRepository.saveAndFlush(place);
-
+        
         // Get the place
         restPlaceMockMvc.perform(get("/api/places/{id}", place.getId()))
             .andExpect(status().isOk())
@@ -383,9 +437,7 @@ public class PlaceResourceIntTest {
             .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY.toString()))
-            // .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()))
             .andExpect(jsonPath("$.lastModifiedBy").value(DEFAULT_UPDATED_BY.toString()))
-            // .andExpect(jsonPath("$.updatedAt").value(DEFAULT_UPDATED_AT.toString()))
             ;
     }
     
@@ -401,19 +453,36 @@ public class PlaceResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(place.getId().intValue()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            // .andExpect(jsonPath("$.terminalName").value(DEFAULT_TERMINAL_NAME.toString()))
-            // .andExpect(jsonPath("$.address").value(DEFAULT_ADDRESS.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
-            // .andExpect(jsonPath("$.createdBy").value(DEFAULT_CREATED_BY.toString()))
-            // .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()))
-            // .andExpect(jsonPath("$.lastModifiedBy").value(DEFAULT_UPDATED_BY.toString()))
-            // .andExpect(jsonPath("$.updatedAt").value(DEFAULT_UPDATED_AT.toString()))
+            .andExpect(jsonPath("$.city.name").value(CityResourceIntTest.DEFAULT_NAME))
+            .andExpect(jsonPath("$.state.name").value(StateResourceIntTest.DEFAULT_NAME))
+            .andExpect(jsonPath("$.country.name").value(CountryResourceIntTest.DEFAULT_NAME))
+            .andExpect(jsonPath("$.clientIds", Matchers.hasSize(2)))
+            ;
+    }
+    
+    @Test
+    @Transactional
+    public void getPlaceClients() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+
+        // Get the place
+        restPlaceMockMvc.perform(get("/api/places/{id}/clients", place.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(place.getClientApplications().iterator().next().getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].publicName").value(hasItem(DEFAULT_PUBLIC_NAME.toString())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME + "2")))
+            .andExpect(jsonPath("$.[*].publicName").value(hasItem(DEFAULT_PUBLIC_NAME + "2")))
             ;
     }
 
     @Test
     @Transactional
     public void getNonExistingPlace() throws Exception {
+    	
         // Get the place
         restPlaceMockMvc.perform(get("/api/places/{id}", Long.MAX_VALUE))
             .andExpect(status().isNotFound());
@@ -525,7 +594,38 @@ public class PlaceResourceIntTest {
             // .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(DEFAULT_UPDATED_AT.toString())))
             ;
     }
-
+    
+    @Test
+    @Transactional
+    public void searchPlaceBySlug() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+        
+        // Search the place
+        restPlaceMockMvc.perform(get("/api/_search/places-slug/{slug}", place.getSlug()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(jsonPath("$.id").value(place.getId().intValue()))
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
+            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
+            .andExpect(jsonPath("$.city.name").value(CityResourceIntTest.DEFAULT_NAME))
+            .andExpect(jsonPath("$.state.name").value(StateResourceIntTest.DEFAULT_NAME))
+            .andExpect(jsonPath("$.country.name").value(CountryResourceIntTest.DEFAULT_NAME))
+            .andExpect(jsonPath("$.clientIds", Matchers.hasSize(2)))
+            ;
+    }
+    
+    @Test
+    @Transactional
+    public void searchPlaceByNonExistingSlug() throws Exception {
+        // Initialize the database
+        placeRepository.saveAndFlush(place);
+        
+        // Search the place
+        restPlaceMockMvc.perform(get("/api/_search/places-slug/{slug}", "NONEXISTING"))
+        				.andExpect(status().isNotFound());
+    }
+    
    /* @Test
     @Transactional
     public void equalsVerifier() throws Exception {

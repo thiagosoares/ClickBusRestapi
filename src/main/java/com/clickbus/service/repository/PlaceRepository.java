@@ -36,6 +36,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     @Query("select place from Place place left join fetch place.clientApplications where place.id =:id")
     Optional<PlaceDetailsDTO> findOneWithEagerRelationshipsDetails(@Param("id") Long id);
     
-    @Query("select place from Place place left join fetch place.clientApplications where place.slug = UPPER(:slug)")
+    @Query("select place from Place place left join fetch place.clientApplications where UPPER(place.slug) = UPPER(:slug)")
     Optional<PlaceDetailsDTO> findOneBySlug(@Param("slug") String slug);
 }

@@ -121,7 +121,7 @@ public class PlaceResource {
      * @param id the id of the placeDTO to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the placeDTO, or with status 404 (Not Found)
      */
-    @GetMapping("/places/{id:[0-9]}")
+    @GetMapping("/places/{id:[0-9]+}")
     @Timed
     public ResponseEntity<PlaceDTO> getPlace(@PathVariable Long id) {
         log.debug("REST request to get Place : {}", id);
@@ -135,7 +135,7 @@ public class PlaceResource {
      * @param id the id of the placeDTO to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the placeDTO, or with status 404 (Not Found)
      */
-    @GetMapping("/places/{id:[0-9]}/details")
+    @GetMapping("/places/{id:[0-9]+}/details")
     @Timed
     public ResponseEntity<PlaceDetailsDTO> getPlaceDetails(@PathVariable Long id) {
         log.debug("REST request to get Place : {}", id);
@@ -149,7 +149,7 @@ public class PlaceResource {
      * @param id the id of the placeDTO to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the placeDTO, or with status 404 (Not Found)
      */
-    @GetMapping("/places/{id:[0-9]}/clients")
+    @GetMapping("/places/{id:[0-9]+}/clients")
     @Timed
     public ResponseEntity<List<ClientApplicationDTO>> getPlaceClients(@PathVariable Long id, Pageable pageable) {
         log.debug("REST request to get Place : {}", id);
@@ -194,14 +194,14 @@ public class PlaceResource {
     
     
     /**
-     * SEARCH  /_search/places?query=:query : search for the place corresponding
+     * SEARCH  /_search/places-slug/{slug} : search for the place corresponding
      * to the query.
      *
      * @param query the query of the place search
      * @param pageable the pagination information
      * @return the result of the search
      */
-    @GetMapping("/_search/places/{slug}")
+    @GetMapping("/_search/places-slug/{slug}")
     @Timed
     public ResponseEntity<PlaceDetailsDTO> searchPlacesBySlug(@PathVariable String slug) {
         log.debug("REST request to search for a page of Places for query {}", slug);

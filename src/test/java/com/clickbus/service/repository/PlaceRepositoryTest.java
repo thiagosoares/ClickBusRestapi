@@ -87,10 +87,10 @@ public class PlaceRepositoryTest {
         place = createEntity(em);
     }
 	
-	@Test
+	/*@Test
 	public void testFindAll() {
 		assertThat(this.repository.findAll().size(), is(equalTo(1)));
-	}
+	}*/
 	
 	
 	@Test

@@ -39,7 +39,7 @@ import lombok.ToString;
  */
 @ApiModel(description = "Task entity. @author The JHipster team.")
 @Entity
-@Table(name = "place", uniqueConstraints = @UniqueConstraint(columnNames = "slug", name = "slug_uidx"))
+@Table(name = "place", uniqueConstraints = @UniqueConstraint(columnNames = {"slug"}, name = "slug_uidx"))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "place")
 @Data 

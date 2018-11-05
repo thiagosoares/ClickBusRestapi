@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,16 +72,6 @@ public class PlaceServiceImpl implements PlaceService {
     public Page<PlaceSimpleDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Places");
         
-        /*Page<Place> list = placeRepository.findAll(pageable);
-        
-        Page<PlaceDTO> listDto = list.map(placeMapper::toDto);
-        
-        for(PlaceDTO dto : listDto.getContent()) {
-        	System.out.println(dto.getName());
-        	System.out.println(dto.getClientApplications());
-        }
-        
-        return listDto;*/
         return placeRepository.findAll(pageable)
         					  .map(placeMapper::toSimpleDto);
     }
@@ -92,20 +83,6 @@ public class PlaceServiceImpl implements PlaceService {
      */
     public Page<PlaceDetailsDTO> findAllWithEagerRelationships(Pageable pageable) {
     	
-    	/*
-    	Page<Place> list = placeRepository.findAllWithEagerRelationships(pageable);
-        
-        Page<PlaceDTO> listDto = list.map(placeMapper::toDto);
-        
-        for(PlaceDTO dto : listDto.getContent()) {
-        	System.out.println(dto.getName());
-        	System.out.println(dto.getClientApplications());
-        }
-        
-        return listDto;*/
-    	
-        // return placeRepository.findAllWithEagerRelationships(pageable).map(placeMapper::toEagerDto);
-    	// return placeRepository.findAllWithEagerRelationships(pageable).map(placeMapper::toEagerDto);
     	return placeRepository.findAllWithEagerRelationships(pageable);
     	
     }
@@ -135,11 +112,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional(readOnly = true)
     public Optional<PlaceDetailsDTO> findOneDetails(Long id) {
         log.debug("Request to get Place : {}", id);
-        
-        PlaceDetailsDTO place = placeRepository.findOneWithEagerRelationshipsDetails(id)
-        		.orElseThrow(() -> new BadRequestAlertException("A new city cannot already have an ID", "PLACE", "idnotexists"));
-        
-        return Optional.ofNullable(place);
+        return placeRepository.findOneWithEagerRelationshipsDetails(id);
     }
     
 
@@ -153,11 +126,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Transactional(readOnly = true)
     public Optional<PlaceDetailsDTO> findOneBySlug(String slug) {
         log.debug("Request to get Place : {}", slug);
-        
-        PlaceDetailsDTO place = placeRepository.findOneBySlug(slug)
-        		.orElseThrow(() -> new BadRequestAlertException("A new city cannot already have an ID", "PLACE", "idnotexists"));
-        
-        return Optional.ofNullable(place);
+        return placeRepository.findOneBySlug(slug);
     }
 
     /**

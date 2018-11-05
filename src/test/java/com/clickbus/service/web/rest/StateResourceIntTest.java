@@ -163,7 +163,8 @@ public class StateResourceIntTest {
     @Test
     @Transactional
     public void createStateWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = stateRepository.findAll().size();
+        
+    	int databaseSizeBeforeCreate = stateRepository.findAll().size();
 
         // Create the State with an existing ID
         state.setId(1L);
