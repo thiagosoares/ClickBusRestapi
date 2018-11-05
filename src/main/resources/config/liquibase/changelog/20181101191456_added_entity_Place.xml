@@ -42,7 +42,7 @@
                 <constraints nullable="false" />
             </column>
 
-            <column name="created_date" type="datetime">
+            <column name="created_date" type="datetime" defaultValueDate="${now}">
                 <constraints nullable="false" />
             </column>
 
@@ -50,7 +50,7 @@
                 <constraints nullable="true" />
             </column>
 
-            <column name="last_modified_date" type="datetime">
+            <column name="last_modified_date" type="datetime" defaultValueDate="${now}">
                 <constraints nullable="true" />
             </column>
 
@@ -60,6 +60,15 @@
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
+        
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/places.csv"
+                  separator=";"
+                  tableName="place">
+            <column name="created_date" type="timestamp"/>
+            <column name="last_modified_date" type="timestamp"/>
+        </loadData>
+        
         <dropDefaultValue tableName="place" columnName="created_date" columnDataType="datetime"/>
         <dropDefaultValue tableName="place" columnName="last_modified_date" columnDataType="datetime"/>
         
@@ -73,6 +82,12 @@
         </createTable>
 
         <addPrimaryKey columnNames="places_id, client_applications_id" tableName="place_client_application"/>
+        
+        <loadData encoding="UTF-8"
+                  file="config/liquibase/places-clients.csv"
+                  separator=";"
+                  tableName="place_client_application">
+        </loadData>
         
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->
