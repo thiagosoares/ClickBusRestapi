@@ -406,6 +406,7 @@
     </dependencies>
 
     <build>
+        <finalName>clickbus</finalName>
         <defaultGoal>spring-boot:run</defaultGoal>
         <testResources>
             <testResource>

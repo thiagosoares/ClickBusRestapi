@@ -4,9 +4,7 @@ Esta é uma aplicação para cálculos de fretes fictícios.
 
 ## Builds prontos
 
-Caso queira executar a aplicação antes de fazer o seu próprio build, utilize os pacotes prontos disponíves no repositório:
-
-[Build](https://bitbucket.org/thiagosoaresjr/clickbusrestapi/downloads/clickbus.war)
+Caso queira executar a aplicação antes de fazer o seu próprio build, utilize o pacote disponível [aqui](https://bitbucket.org/thiagosoaresjr/clickbusrestapi/downloads/clickbus.war)
 
 Para executar a aplicação, apenas execute o seguinte comando:
 
@@ -14,11 +12,15 @@ Desenvolvimento:
 
     java -jar clickbus.war
 
-Produção: (Necessita configurar o banco de dados e o elasticSearch)
+Produção:
 
     java -jar clickbus.war --spring.profiles.active=prod
 
-Então navegue para [http://localhost:8080](http://localhost:8080). 
+
+Para executar o *profile* de **Produção** será necessita configurar o banco de dados e o elasticSearch como serviços ou com o docker, como será descrito a seguir neste documento. 
+
+
+Após iniciada a aplicação, navegue para [http://localhost:8080](http://localhost:8080). 
 
 ## Requisitos para desenvolvimento
 Esta aplicação foi homologada com o seguinte ambiente:
@@ -32,13 +34,13 @@ Esta aplicação foi homologada com o seguinte ambiente:
 
 ## Desenvolvimento
 
-Antes de *buildar* este projeto, você deve instalar e configurar Node.js e o Yarn en sua estação:
+Antes de *buildar* este projeto, você deve instalar e configurar Node.js e o Yarn em sua estação:
 
 1. Node.js: Usamos o Node para executar um servidor da Web de desenvolvimento e construir o projeto.
 2. Yarn: Usamos o Yarn para gerenciar as dependências do Node.
 
 Depois de instalar o Node.js, você poderá executar o seguinte comando para instalar ferramentas de desenvolvimento. 
-Você só precisará executar este comando logo após o clone do projeto ou quando as dependências mudarem em package.json.
+Você só precisará executar este comando logo após o clone do projeto ou quando as dependências mudarem no package.json.
 
     yarn install
 
@@ -80,7 +82,7 @@ Esta aplicação utiliza dois bancos de dados.
 Para desenvolvimento, no profile **dev**, um bando H2 armazenará os dados no disco, dentro da pasta target do projeto. 
 Para a produção, um banco **MySql** será utilizado. As credenciais desse banco devem ser configuradas no arquivo [application-prod.yml](/src/main/resources/config/application-prod.yml). Este arquivo está configurado para que o Docker forneca este banco de dados.
 
-##ElasticSearch
+## ElasticSearch
 
 Esta aplicação utiliza o ElasticSearch em suas consultas.
 Para desenvolvimento, ele utiliza uma base temporária dentro do projeto. 
@@ -122,11 +124,15 @@ Para pará-lo e remover o contêiner, execute:
 
 O mesmo procedimento poderá ser utilizado para iniciar o serviço do ElastcSearch
 
-    docker-compose -f src/main/docker/elasticsearch.yml up -d
+```
+docker-compose -f src/main/docker/elasticsearch.yml up -d
+```
 
-    docker-compose -f src/main/docker/elasticsearch.yml down
+```
+docker-compose -f src/main/docker/elasticsearch.yml down
+```
 
-Você também pode dockerizar totalmente seu aplicativo e todos os serviços dos quais ele depende. Para conseguir isso, primeiro crie uma imagem do docker do seu aplicativo executando:
+Você também pode *dockerizar* totalmente seu aplicativo e todos os serviços dos quais ele depende. Para conseguir isso, primeiro crie uma imagem do docker do seu aplicativo executando:
 
     ./mvnw verify -Pprod dockerfile:build dockerfile:tag@version dockerfile:tag@commit
 
