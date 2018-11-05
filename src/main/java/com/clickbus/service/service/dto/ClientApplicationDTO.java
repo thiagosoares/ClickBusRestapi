@@ -5,6 +5,8 @@ import java.time.Instant;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.cloud.cloudfoundry.com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,6 +21,7 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonPropertyOrder({"id", "name", "publicName","createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
 public class ClientApplicationDTO extends AbstractAuditingDto {
 
     private static final long serialVersionUID = -2196473443547343174L;
@@ -31,6 +34,5 @@ public class ClientApplicationDTO extends AbstractAuditingDto {
 
     @NotNull
     private String publicName;
-
     
 }

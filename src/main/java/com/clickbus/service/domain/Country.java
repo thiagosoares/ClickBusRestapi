@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * A Country.
@@ -37,6 +38,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true, exclude = "states")
+@ToString(exclude = "states")
 public class Country extends AbstractAuditingEntity {
 
 	private static final long serialVersionUID = -4651071775756584619L;

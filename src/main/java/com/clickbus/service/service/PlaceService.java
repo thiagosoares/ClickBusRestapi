@@ -1,7 +1,8 @@
 package com.clickbus.service.service;
 
 import com.clickbus.service.service.dto.PlaceDTO;
-import com.clickbus.service.service.dto.PlaceDetailsDTO;
+import com.clickbus.service.service.dto.PlaceSimpleDTO;
+import com.clickbus.service.service.dto.projections.PlaceDetailsDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,14 +28,14 @@ public interface PlaceService {
      * @param pageable the pagination information
      * @return the list of entities
      */
-    Page<PlaceDTO> findAll(Pageable pageable);
+    Page<PlaceSimpleDTO> findAll(Pageable pageable);
 
     /**
      * Get all the Place with eager load of many-to-many relationships.
      *
      * @return the list of entities
      */
-    Page<PlaceDTO> findAllWithEagerRelationships(Pageable pageable);
+    Page<PlaceDetailsDTO> findAllWithEagerRelationships(Pageable pageable);
     
     /**
      * Get the "id" place.
@@ -43,6 +44,16 @@ public interface PlaceService {
      * @return the entity
      */
     Optional<PlaceDTO> findOne(Long id);
+    
+    
+    /**
+     * Get the "slug" place.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    Optional<PlaceDetailsDTO> findOneBySlug(String slug);
+    
     
     /**
      * Get the "id" place.

@@ -67,7 +67,7 @@ public class UserDTO {
         this.imageUrl = user.getImageUrl();
         this.langKey = user.getLangKey();
         this.createdBy = user.getCreatedBy();
-        this.createdDate = user.getCreatedDate();
+        this.createdDate = user.getCreatedDate(); 
         this.lastModifiedBy = user.getLastModifiedBy();
         this.lastModifiedDate = user.getLastModifiedDate();
         this.authorities = user.getAuthorities().stream()

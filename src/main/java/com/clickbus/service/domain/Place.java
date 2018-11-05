@@ -31,6 +31,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Task entity.
@@ -41,12 +42,11 @@ import lombok.Setter;
 @Table(name = "place", uniqueConstraints = @UniqueConstraint(columnNames = "slug", name = "slug_uidx"))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "place")
-
 @Data 
-@EqualsAndHashCode(callSuper = true, exclude = {"clientApplications", "city"}) 
-// @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = {"clientApplications", "city"})
+@ToString(exclude = {"clientApplications", "city"})
 public class Place extends AbstractAuditingEntity {
 
     private static final long serialVersionUID = 1L;

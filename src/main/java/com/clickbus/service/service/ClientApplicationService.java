@@ -27,6 +27,14 @@ public interface ClientApplicationService {
      * @return the list of entities
      */
     Page<ClientApplicationDTO> findAll(Pageable pageable);
+    
+    /**
+     * Get all the clientApplications by PlaceID.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<ClientApplicationDTO> findAllByPlace(Long placeId, Pageable pageable);
 
 
     /**

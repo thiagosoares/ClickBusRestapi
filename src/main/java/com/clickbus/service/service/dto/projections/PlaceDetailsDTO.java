@@ -1,4 +1,4 @@
-package com.clickbus.service.service.dto;
+package com.clickbus.service.service.dto.projections;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  */
 @JsonIgnoreProperties("clients")
 @JsonPropertyOrder({"id", "name", "slug", "city", "state", "country", "clientIds"})
-public interface PlaceDetailsDTO {
+public interface PlaceDetailsDTO extends PlaceProjectionsDTO {
 
     public Long getId();
 
@@ -36,19 +36,19 @@ public interface PlaceDetailsDTO {
         return getClients().stream().map(ClientID::getId).collect(Collectors.toSet());
     }
     
-    interface CityID {
+    public interface CityID {
     	public String getName();
     }
     
-    interface StateID {
+    public interface StateID {
     	public String getName();
     }
     
-    interface CountryID {
+    public interface CountryID {
     	public String getName();
     }
     
-    interface ClientID {
+    public interface ClientID {
     	public Long getId();
     }
 

@@ -24,7 +24,7 @@ import com.clickbus.service.ClickbusApp;
 import com.clickbus.service.domain.City;
 import com.clickbus.service.domain.ClientApplication;
 import com.clickbus.service.domain.Place;
-import com.clickbus.service.service.dto.PlaceDetailsDTO;
+import com.clickbus.service.service.dto.projections.PlaceDetailsDTO;
 import com.clickbus.service.web.rest.CityResourceIntTest;
 import com.clickbus.service.web.rest.CountryResourceIntTest;
 import com.clickbus.service.web.rest.StateResourceIntTest;

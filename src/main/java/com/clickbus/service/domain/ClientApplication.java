@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * The Employee entity.
@@ -38,6 +40,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true, exclude = "places")
+@ToString(exclude = "places")
 public class ClientApplication extends AbstractAuditingEntity {
 
     private static final long serialVersionUID = 1L;
@@ -55,7 +58,7 @@ public class ClientApplication extends AbstractAuditingEntity {
     @Column(name = "public_name", nullable = false)
     private String publicName;
 
-    @ManyToMany(mappedBy = "clientApplications")
+    @ManyToMany(mappedBy = "clientApplications", fetch = FetchType.LAZY)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @JsonIgnore
     private Set<Place> places = new HashSet<>();

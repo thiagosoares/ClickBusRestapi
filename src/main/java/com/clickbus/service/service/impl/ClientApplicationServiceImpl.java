@@ -69,6 +69,23 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         return clientApplicationRepository.findAll(pageable)
             .map(clientApplicationMapper::toDto);
     }
+    
+    /**
+     * Get all the clientApplications.
+     *
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<ClientApplicationDTO> findAllByPlace(Long placeId, Pageable pageable) {
+        log.debug("Request to get all ClientApplications");
+        
+        // TODO FAZER query !!!! 
+        return clientApplicationRepository.findAllByPlaceId(placeId, pageable)
+        								  .map(clientApplicationMapper::toDto);
+        
+    }
 
 
     /**

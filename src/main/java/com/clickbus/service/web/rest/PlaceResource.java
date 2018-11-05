@@ -1,12 +1,16 @@
 package com.clickbus.service.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.clickbus.service.service.ClientApplicationService;
 import com.clickbus.service.service.PlaceService;
 import com.clickbus.service.web.rest.errors.BadRequestAlertException;
 import com.clickbus.service.web.rest.util.HeaderUtil;
 import com.clickbus.service.web.rest.util.PaginationUtil;
+import com.clickbus.service.service.dto.AbstractAuditingDto;
+import com.clickbus.service.service.dto.ClientApplicationDTO;
 import com.clickbus.service.service.dto.PlaceDTO;
-import com.clickbus.service.service.dto.PlaceDetailsDTO;
+import com.clickbus.service.service.dto.projections.PlaceDetailsDTO;
+import com.clickbus.service.service.dto.projections.PlaceProjectionsDTO;
 
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -40,9 +44,12 @@ public class PlaceResource {
     private static final String ENTITY_NAME = "place";
 
     private PlaceService placeService;
+    
+    private ClientApplicationService clientApplicationService;
 
-    public PlaceResource(PlaceService placeService) {
+    public PlaceResource(PlaceService placeService, ClientApplicationService clientApplicationService) {
         this.placeService = placeService;
+        this.clientApplicationService = clientApplicationService;
     }
 
     /**
@@ -96,9 +103,9 @@ public class PlaceResource {
      */
     @GetMapping("/places")
     @Timed
-    public ResponseEntity<List<PlaceDTO>> getAllPlaces(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
+    public ResponseEntity<List<? extends PlaceProjectionsDTO>> getAllPlaces(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of Places");
-        Page<PlaceDTO> page;
+        Page<? extends PlaceProjectionsDTO> page;
         if (eagerload) {
             page = placeService.findAllWithEagerRelationships(pageable);
         } else {
@@ -122,8 +129,6 @@ public class PlaceResource {
         return ResponseUtil.wrapOrNotFound(placeDTO);
     }
     
-    
-    
     /**
      * GET  /places/:id/details : get the "id" place with yours details like, country, city, state, clientIds.
      *
@@ -136,6 +141,24 @@ public class PlaceResource {
         log.debug("REST request to get Place : {}", id);
         Optional<PlaceDetailsDTO> placeDTO = placeService.findOneDetails(id);
         return ResponseUtil.wrapOrNotFound(placeDTO);
+    }
+    
+    /**
+     * GET  /places/:id/details : get the "id" place with yours details like, country, city, state, clientIds.
+     *
+     * @param id the id of the placeDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the placeDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/places/{id:[0-9]}/clients")
+    @Timed
+    public ResponseEntity<List<ClientApplicationDTO>> getPlaceClients(@PathVariable Long id, Pageable pageable) {
+        log.debug("REST request to get Place : {}", id);
+        
+        //TODO Chamar servido do clientApplicationService
+        
+        Page<ClientApplicationDTO> page = clientApplicationService.findAllByPlace(id, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, String.format("/places/%b/clients", id));
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     /**
@@ -167,6 +190,23 @@ public class PlaceResource {
         Page<PlaceDTO> page = placeService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/places");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+    
+    
+    /**
+     * SEARCH  /_search/places?query=:query : search for the place corresponding
+     * to the query.
+     *
+     * @param query the query of the place search
+     * @param pageable the pagination information
+     * @return the result of the search
+     */
+    @GetMapping("/_search/places/{slug}")
+    @Timed
+    public ResponseEntity<PlaceDetailsDTO> searchPlacesBySlug(@PathVariable String slug) {
+        log.debug("REST request to search for a page of Places for query {}", slug);
+        Optional<PlaceDetailsDTO> placeDTO = placeService.findOneBySlug(slug);
+        return ResponseUtil.wrapOrNotFound(placeDTO);
     }
 
 }

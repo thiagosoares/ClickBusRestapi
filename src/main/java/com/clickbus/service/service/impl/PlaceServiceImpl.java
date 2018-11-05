@@ -1,28 +1,25 @@
 package com.clickbus.service.service.impl;
 
-import com.clickbus.service.service.PlaceService;
-import com.clickbus.service.domain.Place;
-import com.clickbus.service.repository.PlaceRepository;
-import com.clickbus.service.repository.search.PlaceSearchRepository;
-import com.clickbus.service.service.dto.CityDTO;
-import com.clickbus.service.service.dto.CountryDTO;
-import com.clickbus.service.service.dto.PlaceDTO;
-import com.clickbus.service.service.dto.PlaceDetailsDTO;
-import com.clickbus.service.service.dto.StateDTO;
-import com.clickbus.service.service.mapper.PlaceMapper;
-import com.clickbus.service.web.rest.errors.BadRequestAlertException;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import com.clickbus.service.domain.Place;
+import com.clickbus.service.repository.PlaceRepository;
+import com.clickbus.service.repository.search.PlaceSearchRepository;
+import com.clickbus.service.service.PlaceService;
+import com.clickbus.service.service.dto.PlaceDTO;
+import com.clickbus.service.service.dto.PlaceSimpleDTO;
+import com.clickbus.service.service.dto.projections.PlaceDetailsDTO;
+import com.clickbus.service.service.mapper.PlaceMapper;
+import com.clickbus.service.web.rest.errors.BadRequestAlertException;
 
 /**
  * Service Implementation for managing Place.
@@ -71,7 +68,7 @@ public class PlaceServiceImpl implements PlaceService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<PlaceDTO> findAll(Pageable pageable) {
+    public Page<PlaceSimpleDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Places");
         
         /*Page<Place> list = placeRepository.findAll(pageable);
@@ -85,7 +82,7 @@ public class PlaceServiceImpl implements PlaceService {
         
         return listDto;*/
         return placeRepository.findAll(pageable)
-        					  .map(placeMapper::toDto);
+        					  .map(placeMapper::toSimpleDto);
     }
 
     /**
@@ -93,7 +90,7 @@ public class PlaceServiceImpl implements PlaceService {
      *
      * @return the list of entities
      */
-    public Page<PlaceDTO> findAllWithEagerRelationships(Pageable pageable) {
+    public Page<PlaceDetailsDTO> findAllWithEagerRelationships(Pageable pageable) {
     	
     	/*
     	Page<Place> list = placeRepository.findAllWithEagerRelationships(pageable);
@@ -107,8 +104,10 @@ public class PlaceServiceImpl implements PlaceService {
         
         return listDto;*/
     	
-        return placeRepository.findAllWithEagerRelationships(pageable)
-        					  .map(placeMapper::toDto);
+        // return placeRepository.findAllWithEagerRelationships(pageable).map(placeMapper::toEagerDto);
+    	// return placeRepository.findAllWithEagerRelationships(pageable).map(placeMapper::toEagerDto);
+    	return placeRepository.findAllWithEagerRelationships(pageable);
+    	
     }
     
 
@@ -138,6 +137,24 @@ public class PlaceServiceImpl implements PlaceService {
         log.debug("Request to get Place : {}", id);
         
         PlaceDetailsDTO place = placeRepository.findOneWithEagerRelationshipsDetails(id)
+        		.orElseThrow(() -> new BadRequestAlertException("A new city cannot already have an ID", "PLACE", "idnotexists"));
+        
+        return Optional.ofNullable(place);
+    }
+    
+
+    /**
+     * Get one place by slug.
+     *
+     * @param id the id of the entity
+     * @return the entity
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<PlaceDetailsDTO> findOneBySlug(String slug) {
+        log.debug("Request to get Place : {}", slug);
+        
+        PlaceDetailsDTO place = placeRepository.findOneBySlug(slug)
         		.orElseThrow(() -> new BadRequestAlertException("A new city cannot already have an ID", "PLACE", "idnotexists"));
         
         return Optional.ofNullable(place);
