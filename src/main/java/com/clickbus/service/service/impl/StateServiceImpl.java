@@ -2,10 +2,13 @@ package com.clickbus.service.service.impl;
 
 import com.clickbus.service.service.StateService;
 import com.clickbus.service.domain.State;
+import com.clickbus.service.repository.CountryRepository;
 import com.clickbus.service.repository.StateRepository;
 import com.clickbus.service.repository.search.StateSearchRepository;
 import com.clickbus.service.service.dto.StateDTO;
 import com.clickbus.service.service.mapper.StateMapper;
+import com.clickbus.service.web.rest.errors.InvalidDataException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +32,18 @@ public class StateServiceImpl implements StateService {
 
     private StateRepository stateRepository;
 
+    private CountryRepository countryRepository;
+
     private StateMapper stateMapper;
 
     private StateSearchRepository stateSearchRepository;
 
-    public StateServiceImpl(StateRepository stateRepository, StateMapper stateMapper, StateSearchRepository stateSearchRepository) {
+    public StateServiceImpl(StateRepository stateRepository,
+                            CountryRepository countryRepository,
+                            StateMapper stateMapper,
+                            StateSearchRepository stateSearchRepository) {
         this.stateRepository = stateRepository;
+        this.countryRepository = countryRepository;
         this.stateMapper = stateMapper;
         this.stateSearchRepository = stateSearchRepository;
     }
@@ -49,11 +58,18 @@ public class StateServiceImpl implements StateService {
     public StateDTO save(StateDTO stateDTO) {
         log.debug("Request to save State : {}", stateDTO);
 
+        checkCountry(stateDTO);
+
         State state = stateMapper.toEntity(stateDTO);
         state = stateRepository.save(state);
         StateDTO result = stateMapper.toDto(state);
         stateSearchRepository.save(state);
         return result;
+    }
+
+    private void checkCountry(StateDTO stateDTO) {
+        this.countryRepository.findById(stateDTO.getCountryId())
+            .orElseThrow(() -> new InvalidDataException("The Country "+stateDTO.getCountryId()+" is invalid", "CITY"));          
     }
 
     /**

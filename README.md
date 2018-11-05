@@ -16,8 +16,10 @@ Produção:
 
     java -jar clickbus.war --spring.profiles.active=prod
 
+Para executar a aplicação em qualquer *profile* será necessário o **elasticSearch**. Para **Desenvolvimento**, a  configuração mais básica será o suficiente e o Docker é uma boa solução para isso.
 
-Para executar o *profile* de **Produção** será necessita configurar o banco de dados e o elasticSearch como serviços ou com o docker, como será descrito a seguir neste documento. 
+
+Para executar o *profile* de **Produção** será necessita configurar o banco de dados e o **elasticSearch** como serviços ou com o Docker, como será descrito a seguir neste documento. 
 
 
 Após iniciada a aplicação, navegue para [http://localhost:8080](http://localhost:8080). 
