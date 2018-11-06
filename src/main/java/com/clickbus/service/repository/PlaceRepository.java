@@ -38,4 +38,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     
     @Query("select place from Place place left join fetch place.clientApplications where UPPER(place.slug) = UPPER(:slug)")
     Optional<PlaceDetailsDTO> findOneBySlug(@Param("slug") String slug);
+    
+    Boolean existsBySlugIgnoreCase(String slug);
 }

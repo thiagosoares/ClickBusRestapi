@@ -4,6 +4,7 @@ import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.clickbus.service.domain.Place;
 import com.clickbus.service.repository.CityRepository;
+import com.clickbus.service.repository.ClientApplicationRepository;
 import com.clickbus.service.repository.PlaceRepository;
 import com.clickbus.service.repository.search.PlaceSearchRepository;
 import com.clickbus.service.service.PlaceService;
@@ -21,6 +23,7 @@ import com.clickbus.service.service.dto.PlaceDTO;
 import com.clickbus.service.service.dto.PlaceSimpleDTO;
 import com.clickbus.service.service.dto.projections.PlaceDetailsDTO;
 import com.clickbus.service.service.mapper.PlaceMapper;
+import com.clickbus.service.service.util.SlugUtil;
 import com.clickbus.service.web.rest.errors.BadRequestAlertException;
 import com.clickbus.service.web.rest.errors.InvalidDataException;
 
@@ -36,6 +39,8 @@ public class PlaceServiceImpl implements PlaceService {
     private PlaceRepository placeRepository;
 
     private CityRepository cityRepository;
+    
+    private ClientApplicationRepository clientApplicationRepository;
 
     private PlaceMapper placeMapper;
 
@@ -43,10 +48,12 @@ public class PlaceServiceImpl implements PlaceService {
 
     public PlaceServiceImpl(PlaceRepository placeRepository,
                             CityRepository cityRepository,
+                            ClientApplicationRepository clientApplicationRepository,
                             PlaceMapper placeMapper,
                             PlaceSearchRepository placeSearchRepository) {
         this.placeRepository = placeRepository;
         this.cityRepository = cityRepository;
+        this.clientApplicationRepository = clientApplicationRepository;
         this.placeMapper = placeMapper;
         this.placeSearchRepository = placeSearchRepository;
     }
@@ -60,8 +67,10 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public PlaceDTO save(PlaceDTO placeDTO) {
         log.debug("Request to save Place : {}", placeDTO);
-
+        
+        checkSlug(placeDTO);
         checkCity(placeDTO);
+        checkClients(placeDTO);
         
         Place place = placeMapper.toEntity(placeDTO);
         
@@ -71,7 +80,38 @@ public class PlaceServiceImpl implements PlaceService {
         return result;
     }
 
+    private void checkSlug(PlaceDTO placeDTO) {
+    	
+    	if (StringUtils.isBlank(placeDTO.getSlug())) {
+    		if (StringUtils.isNotBlank(placeDTO.getName())) {
+    			placeDTO.setSlug(SlugUtil.makeSlug(placeDTO.getName()));
+    		}
+    	}
+    	
+    	if (this.placeRepository.existsBySlugIgnoreCase(placeDTO.getSlug())) {
+    		throw new InvalidDataException("The Slug "+placeDTO.getSlug()+" already exists", "PLACE");   
+    	}
+    	
+    }
+    
     private void checkCity(PlaceDTO placeDTO) {
+        this.cityRepository.findById(placeDTO.getCityId())
+            .orElseThrow(() -> new InvalidDataException("The City "+placeDTO.getCityId()+" is invalid", "PLACE"));          
+    }
+    
+    private void checkClients(PlaceDTO placeDTO) {
+    	
+    	if(placeDTO.getClientApplications() != null && !placeDTO.getClientApplications().isEmpty()) {
+    		
+    		placeDTO.getClientApplications().forEach(c -> {
+    			
+    			if(!this.clientApplicationRepository.existsById(c.getId())) {
+    				throw new InvalidDataException("The ClientApplication "+c.getId()+" not exists.", "PLACE");
+    			}
+    			
+    		});
+    	}
+    	
         this.cityRepository.findById(placeDTO.getCityId())
             .orElseThrow(() -> new InvalidDataException("The City "+placeDTO.getCityId()+" is invalid", "PLACE"));          
     }
