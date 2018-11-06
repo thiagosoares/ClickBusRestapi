@@ -17,7 +17,7 @@ Produção:
 
 Para executar a aplicação em qualquer *profile* será necessário o **elasticSearch**. 
 
-Para **Desenvolvimento**, a  configuração mais básica será o suficiente e o Docker é uma boa solução para isso. Veja como [aqui](#elasticdocker)
+Para **Desenvolvimento**, a  configuração mais básica será o suficiente e o Docker é uma boa solução para isso. Veja como [aqui](#markdown-header-usando-o-docker-para-facilitar-o-desenvolvmento-opicional)
 
 
 Para executar o *profile* de **Produção** será necessita configurar o banco de dados e o **elasticSearch** como serviços ou com o Docker, como será descrito a seguir neste documento. 
@@ -158,7 +158,7 @@ curl -X GET \
 
 
 
-## [](#elasticdocker) Usando o Docker para facilitar o desenvolvmento (opicional)
+## Usando o Docker para facilitar o desenvolvmento (opicional)
 
 Você pode usar o Docker para melhorar sua experiência de desenvolvimento do JHipster. Várias configurações do docker-compose estão disponíveis na pasta [src/main/docker](src/main/docker) para iniciar os serviços necessários para a aplicação.
 
