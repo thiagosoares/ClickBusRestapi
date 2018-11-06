@@ -3,24 +3,24 @@ Esta é uma aplicação de exercício.
 
 ## Builds prontos
 
-Caso queira executar a aplicação antes de fazer o seu próprio build, utilize o pacote disponível [aqui](https://bitbucket.org/thiagosoaresjr/clickbusrestapi/downloads/clickbus.war)
+Caso queira executar a aplicação antes de fazer o seu próprio build, utilize os pacotes disponíveis em:
+
+ -[Producao](https://bitbucket.org/thiagosoaresjr/clickbusrestapi/downloads/clickbus.war)
+ -[Producao](https://bitbucket.org/thiagosoaresjr/clickbusrestapi/downloads/clickbus-prod.war)
 
 Para executar a aplicação, apenas execute o seguinte comando:
 
 Desenvolvimento:
 
-    java -jar clickbus.war
+    java -jar clickbus.war 
 
 Produção:
 
-    java -jar clickbus.war --spring.profiles.active=prod
-
-Para executar a aplicação em qualquer *profile* será necessário o **elasticSearch**. 
-
-Para **Desenvolvimento**, a  configuração mais básica será o suficiente e o Docker é uma boa solução para isso. Veja como [aqui](#markdown-header-usando-o-docker-para-facilitar-o-desenvolvmento-opicional)
+    java -jar clickbus-prod.war
 
 
-Para executar o *profile* de **Produção** será necessita configurar o banco de dados e o **elasticSearch** como serviços ou com o Docker, como será descrito a seguir neste documento. 
+>> Atenção:
+Para **Desenvolvimento** não será necessário configurar o banco de dados ou o elasticsearch. Contudo, Para executar o *profile* de **Produção** será necessário configurar o banco de dados e o ElasticSearch como serviços ou com o Docker, como será descrito [aqui](#markdown-header-usando-o-docker-para-facilitar-o-desenvolvmento-opicional). 
 
 
 Após iniciada a aplicação, navegue para [http://localhost:8080](http://localhost:8080) e você terá acesso ao link para a documentação [Swagger](http://localhost:8080/#/docs)

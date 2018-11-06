@@ -24,7 +24,7 @@ import { ClickbusAdminModule } from './admin/admin.module';
         BrowserModule,
         HttpClientModule,
         ClickbusAppRoutingModule,
-        Ng2Webstorage.forRoot({ prefix: 'cb', separator: '-' }),
+        Ng2Webstorage.forRoot({ prefix: 'jhi', separator: '-' }),
         ClickbusSharedModule,
         ClickbusHomeModule,
         ClickbusAdminModule
