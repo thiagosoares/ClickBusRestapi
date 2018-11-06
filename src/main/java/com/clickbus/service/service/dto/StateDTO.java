@@ -23,7 +23,7 @@ public class StateDTO extends AbstractAuditingDto {
 
     private Long id;
 
-    @NotNull
+    @NotNull(message = "the name can't be null")
     @Size(min = 2, max = 255)
     private String name;
 

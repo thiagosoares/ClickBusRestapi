@@ -27,18 +27,18 @@ public class PlaceDTO extends AbstractAuditingDto {
 
     private Long id;
 
-    @NotNull
+    @NotNull(message = "the name can't be null")
     @Size(min = 2, max = 255)
     private String name;
 
-    @NotNull
+    @NotNull(message = "the terminalName can't be null")
     @Size(min = 2, max = 255)
     private String terminalName;
 
-    @NotNull
+    @NotNull(message = "the address can't be null")
     private String address;
 
-    @NotNull
+    // @NotNull Caso não seja informado, um slug será produzido a partir do nome
     @Size(min = 2, max = 255)
     private String slug;
 

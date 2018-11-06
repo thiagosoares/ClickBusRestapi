@@ -23,11 +23,11 @@ public class CityDTO extends AbstractAuditingDto {
 
     private Long id;
 
-    @NotNull
+    @NotNull(message = "the name can't be null")
     @Size(min = 2, max = 100)
     private String name;
 
-    @NotNull
+    @NotNull(message = "the stateId can't be null")
     private Long stateId;
     
     private String stateName;
