@@ -103,7 +103,7 @@ public class PlaceResource {
      */
     @GetMapping("/places")
     @Timed
-    public ResponseEntity<List<? extends PlaceProjectionsDTO>> getAllPlaces(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
+    public ResponseEntity<List<? extends PlaceProjectionsDTO>> getAllPlaces(Pageable pageable, @RequestParam(required = false, defaultValue = "true") boolean eagerload) {
         log.debug("REST request to get a page of Places");
         Page<? extends PlaceProjectionsDTO> page;
         if (eagerload) {

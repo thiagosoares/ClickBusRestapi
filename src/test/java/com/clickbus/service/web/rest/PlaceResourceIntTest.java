@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -203,17 +204,12 @@ public class PlaceResourceIntTest {
         assertThat(placeList).hasSize(databaseSizeBeforeCreate + 1);
         Place testPlace = placeList.get(placeList.size() - 1);
         
-        System.out.println("Teste");
-        System.out.println(testPlace.getClientApplications());
-        
         assertThat(testPlace.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testPlace.getTerminalName()).isEqualTo(DEFAULT_TERMINAL_NAME);
         assertThat(testPlace.getAddress()).isEqualTo(DEFAULT_ADDRESS);
         assertThat(testPlace.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testPlace.getCreatedBy()).isEqualTo(DEFAULT_CREATED_BY);
-        // assertTrue(TestUtil.compareDatesMinutes(testPlace.getCreatedDate()));
         assertThat(testPlace.getLastModifiedBy()).isEqualTo(DEFAULT_UPDATED_BY);
-        // assertTrue(TestUtil.compareDatesMinutes(testPlace.getLastModifiedDate()));
 
         // Validate the Place in Elasticsearch
         verify(mockPlaceSearchRepository, times(1)).save(testPlace);
@@ -301,9 +297,9 @@ public class PlaceResourceIntTest {
 
     @Test
     @Transactional
-    public void checkSlugIsRequired() throws Exception {
-        int databaseSizeBeforeTest = placeRepository.findAll().size();
-        // set the field null
+    public void checkSlugIsRequiredNull() throws Exception {
+
+    	// set the field null
         place.setSlug(null);
 
         // Create the Place, which fails.
@@ -312,10 +308,46 @@ public class PlaceResourceIntTest {
         restPlaceMockMvc.perform(post("/api/places")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(placeDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.slug").value(DEFAULT_NAME.toLowerCase()));
 
-        List<Place> placeList = placeRepository.findAll();
-        assertThat(placeList).hasSize(databaseSizeBeforeTest);
+    }
+    
+    @Test
+    @Transactional
+    public void checkSlugIsRequiredNullComplexName() throws Exception {
+        
+        // set the field null
+        place.setSlug(null);
+        place.setName("Nome para criação do slug");
+
+        // Create the Place, which fails.
+        PlaceDTO placeDTO = placeMapper.toDto(place);
+
+        restPlaceMockMvc.perform(post("/api/places")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(placeDTO)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.slug").value("nome-para-criacao-do-slug"));
+
+    }
+    
+    @Test
+    @Transactional
+    public void checkSlugIsRequired() throws Exception {
+        
+        // set the field null
+        place.setSlug("my-custom-slug");
+
+        // Create the Place, which fails.
+        PlaceDTO placeDTO = placeMapper.toDto(place);
+
+        restPlaceMockMvc.perform(post("/api/places")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(placeDTO)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.slug").value("my-custom-slug"));
+
     }
     
     @Test
@@ -371,6 +403,33 @@ public class PlaceResourceIntTest {
         // Validate the Place in Elasticsearch
         verify(mockPlaceSearchRepository, times(0)).save(place);
     }
+    
+    @Test
+    @Transactional
+    public void createPlaceWithNonExistingClientApplication() throws Exception {
+    	
+    	// Initialize the database
+        int databaseSizeBeforeCreate = placeRepository.findAll().size();
+
+        // Create the Place with an existing SLUG
+        PlaceDTO placeDTO = placeMapper.toDto(place);
+        placeDTO.getClientApplications().add(new ClientApplicationDTO(Long.MAX_VALUE, "", ""));
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restPlaceMockMvc.perform(post("/api/places")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(placeDTO)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.entityName").value("PLACE"))
+            .andExpect(jsonPath("$.title").value("The ClientApplication "+Long.MAX_VALUE+" not exists."));
+
+        // Validate the Place in the database
+        List<Place> placeList = placeRepository.findAll();
+        assertThat(placeList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Place in Elasticsearch
+        verify(mockPlaceSearchRepository, times(0)).save(place);
+    }
 
 
     @Test
@@ -385,36 +444,30 @@ public class PlaceResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(place.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].terminalName").value(hasItem(DEFAULT_TERMINAL_NAME.toString())))
-            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY.toString())))
-            // .andExpect(jsonPath("$.[*].createdDate").value(hasItem(DEFAULT_CREATED_AT.toString())))
-            .andExpect(jsonPath("$.[*].lastModifiedBy").value(hasItem(DEFAULT_UPDATED_BY.toString())))
-            // .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(DEFAULT_UPDATED_AT.toString())))
+            .andExpect(jsonPath("$.[*].city.name").value(hasItem(CityResourceIntTest.DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].state.name").value(hasItem(StateResourceIntTest.DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].country.name").value(hasItem(CountryResourceIntTest.DEFAULT_NAME)))
             ;
     }
     
     @Test
     @Transactional
-    public void getAllPlacesEager() throws Exception {
+    public void getAllPlacesEagerFalse() throws Exception {
         // Initialize the database
         placeRepository.saveAndFlush(place);
 
         // Get all the placeList
-        restPlaceMockMvc.perform(get("/api/places?eagerload=true&sort=id,desc"))
+        restPlaceMockMvc.perform(get("/api/places?eagerload=false&sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(place.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].terminalName").value(hasItem(DEFAULT_TERMINAL_NAME.toString())))
+            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].city.name").value(hasItem(CityResourceIntTest.DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].state.name").value(hasItem(StateResourceIntTest.DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].country.name").value(hasItem(CountryResourceIntTest.DEFAULT_NAME)))
-            // .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY.toString())))
-            // .andExpect(jsonPath("$.[*].createdDate").value(hasItem(DEFAULT_CREATED_AT.toString())))
-            // .andExpect(jsonPath("$.[*].lastModifiedBy").value(hasItem(DEFAULT_UPDATED_BY.toString())))
-            // .andExpect(jsonPath("$.[*].lastModifiedDate").value(hasItem(DEFAULT_UPDATED_AT.toString())))
+            .andExpect(jsonPath("$.[*].createdBy").value(hasItem(DEFAULT_CREATED_BY.toString())))
+            .andExpect(jsonPath("$.[*].lastModifiedBy").value(hasItem(DEFAULT_UPDATED_BY.toString())))
             ;
     }
     

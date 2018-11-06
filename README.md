@@ -27,14 +27,73 @@ Após iniciada a aplicação, navegue para [http://localhost:8080](http://localh
 
 ## Validação do exercício proposto 
 
-Além dos requisitos solicitados no exercício, algumas outras coisas foram criadas. Para a validação da tarefa é suficiente utilizar os seguintes *resources*:
+Além dos requisitos solicitados no exercício, algumas outras *coisinhas* foram criadas. Para a validação da tarefa proposta é suficiente utilizar os seguintes *resources*:
 
-- [/api/authenticate]()
-- [/api/authenticate]()
-- [/api/authenticate]()
+- /api/authenticate
+- /api/places
+- /api/places/{id}/details
 
-[TET](#visualtesting)
+É possivel executar este teste com o cURL utilizando os seguintes passos:
 
+#### Obtenha um token de acesso (JWT)
+```
+curl -X POST \
+  http://localhost:8080/api/authenticate \
+  -H 'Cache-Control: no-cache' \
+  -d '{
+  "username":"admin", "password":"admin"
+}'
+```
+
+#### Buscar Places
+
+Para buscar os dez primeiro **Places** da base de dados, substitua o token de acesso obtido na seguinte requisição.
+
+```
+curl -X GET \
+  'http://localhost:8080/api/places?eagerload=true' \
+  -H 'Authorization: Bearer TOKEN_ACESSO_AQUI' \
+  -H 'Cache-Control: no-cache' \
+```
+
+Se preferir alterar a paginação ou a ordenação, fique a vontade
+
+```
+curl -X GET \
+  'http://localhost:8080/api/places?eagerload=true&page=0&size=10&sort=id,desc' \
+  -H 'Authorization: Bearer TOKEN_ACESSO_AQUI' \
+  -H 'Cache-Control: no-cache' \
+```
+
+Para buscar o **Place** de **ID igual a 1**, use a seguinte requisição
+
+```
+curl -X GET \
+  http://localhost:8080/api/places/1 \
+  -H 'Authorization: Bearer TOKEN_ACESSO_AQUI' \
+  -H 'Cache-Control: no-cache' \
+```
+
+Também é possível buscar os dados completos do **Place**, com seus relacionamentos, **conforme solicitado no exercício**
+
+```
+curl -X GET \
+  http://localhost:8080/api/places/1/details \
+  -H 'Authorization: Bearer TOKEN_ACESSO_AQUI' \
+  -H 'Cache-Control: no-cache' \
+```
+
+
+Ou apenas seus **ClientApplications**
+
+```
+curl -X GET \
+  http://localhost:8080/api/places/1/clients \
+  -H 'Authorization: Bearer TOKEN_ACESSO_AQUI' \
+  -H 'Cache-Control: no-cache' \
+```
+
+Muitos outros resources foram criados, confira no [Swagger](http://localhost:8080/#/docs)
 
 ## Requisitos para desenvolvimento
 Esta aplicação foi homologada com o seguinte ambiente:
@@ -98,11 +157,10 @@ Para a produção, um banco **MySql** será utilizado. As credenciais desse banc
 
 ## ElasticSearch
 
-Esta aplicação utiliza o ElasticSearch em suas consultas.
-Para **desenvolvimento**, ele utiliza uma base temporária dentro do projeto, contudo é necessário que o serviço esteja disponível. 
-Isso poderá ser feito com o Docker conforme pode ser visto a seguir. 
+Esta aplicação utiliza o **ElasticSearch** em suas consultas.
+Para **desenvolvimento**, ele utiliza uma base temporária dentro do projeto, contudo é necessário que o serviço esteja disponível. Isso poderá ser feito com o **Docker** conforme pode ser visto [aqui](#markdown-header-usando-o-docker-para-facilitar-o-desenvolvmento-opicional). 
 
-Para **produção** é necessário um serviço Elastisearch funcionando e com sua interface Rest habilidata, visto que a comunicação acontecerá através do [JEST](https://github.com/VanRoy/spring-data-jest). 
+Para **produção** é necessário um serviço Elastisearch funcionando e com sua interface **Rest** habilidata, visto que a comunicação acontecerá utilizando HTTP (REST) através do [JEST](https://github.com/VanRoy/spring-data-jest). 
 
 ## Build para Produção
 
@@ -112,49 +170,18 @@ Para otimizar a aplicação para o ambiente de produção, utilize os comando:
 
 Ele irá concatenar e minificar todos os CSS e JavaScripts do cliente e atualizar as referências no `index.html`.
 
-Então, para saber se tudo esta funcionando bem, execute o `war` da aplicação rodando: 
+Então, para saber se tudo esta funcionando bem, execute o `war` da aplicação rodando (*não esqueça do ElasticSearch e do Mysql*): 
 
-    java -jar target/clickbus.war
+    java -jar target/clickbus.war --spring.profiles.active=prod
 
 
-Então navegue para [http://localhost:8080](http://localhost:8080) e veja a mágica. Claro, seria legal configurar o banco de dados antes.
+Então navegue para [http://localhost:8080](http://localhost:8080).
 
 ## Testing
 
 Para disparar os testes da aplicação, use:
 
     ./mvnw clean test
-
-## <a name="visualtesting"></a> Visual Testing
-
-validacao do exercicio
-
-```
-curl -X POST \
-  http://localhost:8080/api/authenticate \
-  -H 'Cache-Control: no-cache' \
-  -H 'Content-Type: application/json' \
-  -H 'Postman-Token: 80cab4e0-ffcb-4b3f-ab06-12ab78c8cd59' \
-  -d '{
-  "username":"admin", "password":"admin"
-}'
-```
-
-```
-curl -X GET \
-  'http://localhost:8080/api/places?eagerload=true' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGgiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTU0MTU4OTg4Mn0.eoB0WNKjhoPZbCRQStL3aNu9aVJyuRm5gQohpGu3Nz5sn7mdaZf0H9mL2oMdumJfStL1buL1WOXC1CAb-UKqFg' \
-  -H 'Cache-Control: no-cache' \
-  -H 'Postman-Token: eefc5a81-e01c-43e5-8724-b98e883c7a19'
-```
-
-```
-curl -X GET \
-  http://localhost:8080/api/places/1/details \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImF1dGgiOiJST0xFX0FETUlOLFJPTEVfVVNFUiIsImV4cCI6MTU0MTU4OTg4Mn0.eoB0WNKjhoPZbCRQStL3aNu9aVJyuRm5gQohpGu3Nz5sn7mdaZf0H9mL2oMdumJfStL1buL1WOXC1CAb-UKqFg' \
-  -H 'Cache-Control: no-cache' \
-  -H 'Postman-Token: 9d7da9a9-f1d1-4583-805f-f1baa0089153'
-```
 
 
 
@@ -175,6 +202,7 @@ O mesmo procedimento poderá ser utilizado para iniciar o serviço do ElastcSear
 ```
 docker-compose -f src/main/docker/elasticsearch.yml up -d
 ```
+Para pará-lo e remover o contêiner, execute:
 
 ```
 docker-compose -f src/main/docker/elasticsearch.yml down

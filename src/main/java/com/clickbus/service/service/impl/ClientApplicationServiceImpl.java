@@ -1,23 +1,23 @@
 package com.clickbus.service.service.impl;
 
-import com.clickbus.service.service.ClientApplicationService;
-import com.clickbus.service.domain.ClientApplication;
-import com.clickbus.service.repository.ClientApplicationRepository;
-import com.clickbus.service.repository.PlaceRepository;
-import com.clickbus.service.repository.search.ClientApplicationSearchRepository;
-import com.clickbus.service.service.dto.ClientApplicationDTO;
-import com.clickbus.service.service.mapper.ClientApplicationMapper;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import com.clickbus.service.domain.ClientApplication;
+import com.clickbus.service.repository.ClientApplicationRepository;
+import com.clickbus.service.repository.PlaceRepository;
+import com.clickbus.service.repository.search.ClientApplicationSearchRepository;
+import com.clickbus.service.service.ClientApplicationService;
+import com.clickbus.service.service.dto.ClientApplicationDTO;
+import com.clickbus.service.service.mapper.ClientApplicationMapper;
 
 /**
  * Service Implementation for managing ClientApplication.
@@ -30,8 +30,6 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
 
     private ClientApplicationRepository clientApplicationRepository;
     
-    private PlaceRepository placeRepository;
-
     private ClientApplicationMapper clientApplicationMapper;
 
     private ClientApplicationSearchRepository clientApplicationSearchRepository;
@@ -41,7 +39,6 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
                                         ClientApplicationMapper clientApplicationMapper, 
                                         ClientApplicationSearchRepository clientApplicationSearchRepository) {
         this.clientApplicationRepository = clientApplicationRepository;
-        this.placeRepository = placeRepository;
         this.clientApplicationMapper = clientApplicationMapper;
         this.clientApplicationSearchRepository = clientApplicationSearchRepository;
     }
@@ -62,11 +59,6 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         clientApplicationSearchRepository.save(clientApplication);
         return result;
     }
-
-    // private void checkCountry(ClientApplicationDTO clientApplicationDTO) {
-    //     this.countryRepository.findById(clientApplicationDTO.get)
-    //         .orElseThrow(() -> new InvalidDataException("The Country "+stateDTO.getCountryId()+" is invalid", "CITY"));          
-    // }
 
     /**
      * Get all the clientApplications.
