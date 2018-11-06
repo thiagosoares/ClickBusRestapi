@@ -6,7 +6,7 @@ Esta é uma aplicação de exercício.
 Caso queira executar a aplicação antes de fazer o seu próprio build, utilize os pacotes disponíveis em:
 
  -[Producao](https://bitbucket.org/thiagosoaresjr/clickbusrestapi/downloads/clickbus.war)
- -[Producao](https://bitbucket.org/thiagosoaresjr/clickbusrestapi/downloads/clickbus-prod.war)
+ -[Producao](https://bitbucket.org/thiagosoaresjr/clickbusrestapi/downloads/clickbus-prod-swagger.war)
 
 Para executar a aplicação, apenas execute o seguinte comando:
 
@@ -16,7 +16,7 @@ Desenvolvimento:
 
 Produção:
 
-    java -jar clickbus-prod.war
+    java -jar clickbus-prod-swagger.war
 
 
 >> Atenção:
@@ -32,6 +32,8 @@ Além dos requisitos solicitados no exercício, algumas outras *coisinhas* foram
 - /api/authenticate
 - /api/places
 - /api/places/{id}/details
+
+Existe um projeto **Postman** disponível para facilitar os testes [aqui](https://bitbucket.org/thiagosoaresjr/clickbusrestapi/downloads/UserCases.postman_collection.json)
 
 É possivel executar este teste com o cURL utilizando os seguintes passos:
 
