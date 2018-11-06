@@ -158,7 +158,7 @@ curl -X GET \
 
 
 
-## (#elasticdocker)  Usando o Docker para facilitar o desenvolvmento (opicional)
+## [](#elasticdocker) Usando o Docker para facilitar o desenvolvmento (opicional)
 
 Você pode usar o Docker para melhorar sua experiência de desenvolvimento do JHipster. Várias configurações do docker-compose estão disponíveis na pasta [src/main/docker](src/main/docker) para iniciar os serviços necessários para a aplicação.
 
