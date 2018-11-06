@@ -181,6 +181,32 @@ public class CountryResourceIntTest {
         // Validate the Country in Elasticsearch
         verify(mockCountrySearchRepository, times(0)).save(country);
     }
+    
+    @Test
+    @Transactional
+    public void createCountryWithExistingName() throws Exception {
+    	
+    	countryRepository.saveAndFlush(country);
+    	
+        int databaseSizeBeforeCreate = countryRepository.findAll().size();
+
+        // Create the Country with an existing Name
+        country.setName(DEFAULT_NAME);
+        CountryDTO countryDTO = countryMapper.toDto(country);
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restCountryMockMvc.perform(post("/api/countries")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(countryDTO)))
+            .andExpect(status().isBadRequest());
+
+        // Validate the Country in the database
+        List<Country> countryList = countryRepository.findAll();
+        assertThat(countryList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Country in Elasticsearch
+        verify(mockCountrySearchRepository, times(0)).save(country);
+    }
 
     @Test
     @Transactional

@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -30,7 +31,7 @@ import lombok.NoArgsConstructor;
  * A State.
  */
 @Entity
-@Table(name = "state")
+@Table(name = "state", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}, name = "name_uidx"))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "state")
 @Data
@@ -47,7 +48,7 @@ public class State extends AbstractAuditingEntity {
 
     @NotNull
     @Size(min = 2, max = 100)
-    @Column(name = "name", length = 100, nullable = false)
+    @Column(name = "name", length = 100, nullable = false, unique = true)
     private String name;
 
     @OneToMany(mappedBy = "state", fetch = FetchType.LAZY)

@@ -192,6 +192,33 @@ public class CityResourceIntTest {
         // Validate the City in Elasticsearch
         verify(mockCitySearchRepository, times(0)).save(city);
     }
+    
+    @Test
+    @Transactional
+    public void createCityWithExistingName() throws Exception {
+        
+    	// Initialize the database
+        cityRepository.saveAndFlush(city);
+        
+    	int databaseSizeBeforeCreate = cityRepository.findAll().size();
+
+        // Create the City with an existing NAME
+    	city.setName(DEFAULT_NAME);
+        CityDTO cityDTO = cityMapper.toDto(city);
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restCityMockMvc.perform(post("/api/cities")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(cityDTO)))
+            .andExpect(status().isBadRequest());
+
+        // Validate the City in the database
+        List<City> cityList = cityRepository.findAll();
+        assertThat(cityList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the City in Elasticsearch
+        verify(mockCitySearchRepository, times(0)).save(city);
+    }
 
     @Test
     @Transactional

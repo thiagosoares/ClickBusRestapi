@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -28,7 +29,7 @@ import lombok.NoArgsConstructor;
  */
 @ApiModel(description = "not an ignored comment")
 @Entity
-@Table(name = "city")
+@Table(name = "city", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}, name = "name_uidx"))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "city")
 @Data
@@ -45,7 +46,7 @@ public class City extends AbstractAuditingEntity {
 
     @NotNull
     @Size(min = 2, max = 100)
-    @Column(name = "name", length = 100, nullable = false)
+    @Column(name = "name", length = 100, nullable = false, unique = true)
     private String name;
 
     @NotNull

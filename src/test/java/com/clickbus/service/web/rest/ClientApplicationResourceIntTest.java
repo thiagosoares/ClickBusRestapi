@@ -181,6 +181,33 @@ public class ClientApplicationResourceIntTest {
         // Validate the ClientApplication in Elasticsearch
         verify(mockClientApplicationSearchRepository, times(0)).save(clientApplication);
     }
+    
+    @Test
+    @Transactional
+    public void createClientApplicationWithExistingName() throws Exception {
+    	
+    	clientApplicationRepository.saveAndFlush(clientApplication);
+    	
+        int databaseSizeBeforeCreate = clientApplicationRepository.findAll().size();
+
+        // Create the ClientApplication with an existing Name
+        clientApplication.setName(DEFAULT_NAME);
+        ClientApplicationDTO clientApplicationDTO = clientApplicationMapper.toDto(clientApplication);
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restClientApplicationMockMvc.perform(post("/api/client-applications")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(clientApplicationDTO)))
+            .andExpect(status().isBadRequest());
+
+        // Validate the ClientApplication in the database
+        List<ClientApplication> clientApplicationList = clientApplicationRepository.findAll();
+        assertThat(clientApplicationList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the ClientApplication in Elasticsearch
+        verify(mockClientApplicationSearchRepository, times(0)).save(clientApplication);
+    }
+
 
     @Test
     @Transactional

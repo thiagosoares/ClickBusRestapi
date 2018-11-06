@@ -1,7 +1,6 @@
 package com.clickbus.service.domain;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -12,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,7 +31,7 @@ import lombok.ToString;
  * A Country.
  */
 @Entity
-@Table(name = "country")
+@Table(name = "country", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}, name = "name_uidx"))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Document(indexName = "country")
 @Data
@@ -49,7 +49,7 @@ public class Country extends AbstractAuditingEntity {
 
     @NotNull
     @Size(min = 2, max = 100)
-    @Column(name = "name", length = 100, nullable = false)
+    @Column(name = "name", length = 100, nullable = false, unique = true)
     private String name;	
 
     @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)

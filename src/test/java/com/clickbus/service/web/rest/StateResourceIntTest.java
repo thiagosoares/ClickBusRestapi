@@ -183,6 +183,32 @@ public class StateResourceIntTest {
         // Validate the State in Elasticsearch
         verify(mockStateSearchRepository, times(0)).save(state);
     }
+    
+    @Test
+    @Transactional
+    public void createStateWithExistingName() throws Exception {
+        
+    	stateRepository.saveAndFlush(state);
+    	
+    	int databaseSizeBeforeCreate = stateRepository.findAll().size();
+
+        // Create the State with an existing Name
+        state.setName(DEFAULT_NAME);;
+        StateDTO stateDTO = stateMapper.toDto(state);
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restStateMockMvc.perform(post("/api/states")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(stateDTO)))
+            .andExpect(status().isBadRequest());
+
+        // Validate the State in the database
+        List<State> stateList = stateRepository.findAll();
+        assertThat(stateList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the State in Elasticsearch
+        verify(mockStateSearchRepository, times(0)).save(state);
+    }
 
    
     @Test
