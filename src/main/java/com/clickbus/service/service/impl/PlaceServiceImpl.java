@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.clickbus.service.domain.Place;
+import com.clickbus.service.repository.CityRepository;
 import com.clickbus.service.repository.PlaceRepository;
 import com.clickbus.service.repository.search.PlaceSearchRepository;
 import com.clickbus.service.service.PlaceService;
@@ -21,6 +22,7 @@ import com.clickbus.service.service.dto.PlaceSimpleDTO;
 import com.clickbus.service.service.dto.projections.PlaceDetailsDTO;
 import com.clickbus.service.service.mapper.PlaceMapper;
 import com.clickbus.service.web.rest.errors.BadRequestAlertException;
+import com.clickbus.service.web.rest.errors.InvalidDataException;
 
 /**
  * Service Implementation for managing Place.
@@ -33,12 +35,18 @@ public class PlaceServiceImpl implements PlaceService {
 
     private PlaceRepository placeRepository;
 
+    private CityRepository cityRepository;
+
     private PlaceMapper placeMapper;
 
     private PlaceSearchRepository placeSearchRepository;
 
-    public PlaceServiceImpl(PlaceRepository placeRepository, PlaceMapper placeMapper, PlaceSearchRepository placeSearchRepository) {
+    public PlaceServiceImpl(PlaceRepository placeRepository,
+                            CityRepository cityRepository,
+                            PlaceMapper placeMapper,
+                            PlaceSearchRepository placeSearchRepository) {
         this.placeRepository = placeRepository;
+        this.cityRepository = cityRepository;
         this.placeMapper = placeMapper;
         this.placeSearchRepository = placeSearchRepository;
     }
@@ -53,12 +61,19 @@ public class PlaceServiceImpl implements PlaceService {
     public PlaceDTO save(PlaceDTO placeDTO) {
         log.debug("Request to save Place : {}", placeDTO);
 
+        checkCity(placeDTO);
+        
         Place place = placeMapper.toEntity(placeDTO);
         
         place = placeRepository.save(place);
         PlaceDTO result = placeMapper.toDto(place);
         placeSearchRepository.save(place);
         return result;
+    }
+
+    private void checkCity(PlaceDTO placeDTO) {
+        this.cityRepository.findById(placeDTO.getCityId())
+            .orElseThrow(() -> new InvalidDataException("The City "+placeDTO.getCityId()+" is invalid", "PLACE"));          
     }
 
     /**

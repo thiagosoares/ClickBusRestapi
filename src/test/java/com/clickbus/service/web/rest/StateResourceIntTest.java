@@ -184,6 +184,32 @@ public class StateResourceIntTest {
         verify(mockStateSearchRepository, times(0)).save(state);
     }
 
+   
+    @Test
+    @Transactional
+    public void createStateWithNonExistingCountry() throws Exception {
+        int databaseSizeBeforeCreate = stateRepository.findAll().size();
+
+        // Create the State with an existing ID
+        state.setCountry(new Country(Long.MAX_VALUE, null, null));
+        StateDTO stateDTO = stateMapper.toDto(state);
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restStateMockMvc.perform(post("/api/states")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(stateDTO)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.entityName").value("STATE"))
+            .andExpect(jsonPath("$.title").value("The Country "+Long.MAX_VALUE+" is invalid"));
+
+        // Validate the State in the database
+        List<State> stateList = stateRepository.findAll();
+        assertThat(stateList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the State in Elasticsearch
+        verify(mockStateSearchRepository, times(0)).save(state);
+    }
+
     @Test
     @Transactional
     public void checkNameIsRequired() throws Exception {
@@ -198,6 +224,7 @@ public class StateResourceIntTest {
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(stateDTO)))
             .andExpect(status().isBadRequest());
+            
 
         List<State> stateList = stateRepository.findAll();
         assertThat(stateList).hasSize(databaseSizeBeforeTest);

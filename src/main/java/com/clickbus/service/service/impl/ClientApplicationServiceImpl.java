@@ -3,6 +3,7 @@ package com.clickbus.service.service.impl;
 import com.clickbus.service.service.ClientApplicationService;
 import com.clickbus.service.domain.ClientApplication;
 import com.clickbus.service.repository.ClientApplicationRepository;
+import com.clickbus.service.repository.PlaceRepository;
 import com.clickbus.service.repository.search.ClientApplicationSearchRepository;
 import com.clickbus.service.service.dto.ClientApplicationDTO;
 import com.clickbus.service.service.mapper.ClientApplicationMapper;
@@ -28,13 +29,19 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
     private final Logger log = LoggerFactory.getLogger(ClientApplicationServiceImpl.class);
 
     private ClientApplicationRepository clientApplicationRepository;
+    
+    private PlaceRepository placeRepository;
 
     private ClientApplicationMapper clientApplicationMapper;
 
     private ClientApplicationSearchRepository clientApplicationSearchRepository;
 
-    public ClientApplicationServiceImpl(ClientApplicationRepository clientApplicationRepository, ClientApplicationMapper clientApplicationMapper, ClientApplicationSearchRepository clientApplicationSearchRepository) {
+    public ClientApplicationServiceImpl(ClientApplicationRepository clientApplicationRepository,
+                                        PlaceRepository placeRepository,
+                                        ClientApplicationMapper clientApplicationMapper, 
+                                        ClientApplicationSearchRepository clientApplicationSearchRepository) {
         this.clientApplicationRepository = clientApplicationRepository;
+        this.placeRepository = placeRepository;
         this.clientApplicationMapper = clientApplicationMapper;
         this.clientApplicationSearchRepository = clientApplicationSearchRepository;
     }
@@ -55,6 +62,11 @@ public class ClientApplicationServiceImpl implements ClientApplicationService {
         clientApplicationSearchRepository.save(clientApplication);
         return result;
     }
+
+    // private void checkCountry(ClientApplicationDTO clientApplicationDTO) {
+    //     this.countryRepository.findById(clientApplicationDTO.get)
+    //         .orElseThrow(() -> new InvalidDataException("The Country "+stateDTO.getCountryId()+" is invalid", "CITY"));          
+    // }
 
     /**
      * Get all the clientApplications.

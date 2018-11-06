@@ -7,6 +7,8 @@ import com.clickbus.service.repository.StateRepository;
 import com.clickbus.service.repository.search.CitySearchRepository;
 import com.clickbus.service.service.dto.CityDTO;
 import com.clickbus.service.service.mapper.CityMapper;
+import com.clickbus.service.web.rest.errors.InvalidDataException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +31,19 @@ public class CityServiceImpl implements CityService {
     private final Logger log = LoggerFactory.getLogger(CityServiceImpl.class);
 
     private CityRepository cityRepository;
+
+    private StateRepository stateRepository;
     
     private CityMapper cityMapper;
 
     private CitySearchRepository citySearchRepository;
 
-    public CityServiceImpl(CityRepository cityRepository, CityMapper cityMapper, CitySearchRepository citySearchRepository) {
+    public CityServiceImpl(CityRepository cityRepository,
+                           StateRepository stateRepository,
+                           CityMapper cityMapper,
+                           CitySearchRepository citySearchRepository) {
         this.cityRepository = cityRepository;
+        this.stateRepository = stateRepository;
         this.cityMapper = cityMapper;
         this.citySearchRepository = citySearchRepository;
     }
@@ -50,12 +58,19 @@ public class CityServiceImpl implements CityService {
     public CityDTO save(CityDTO cityDTO) {
         log.debug("Request to save City : {}", cityDTO);
 
+        checkState(cityDTO);
+
         City city = cityMapper.toEntity(cityDTO);
         
         city = cityRepository.save(city);
         CityDTO result = cityMapper.toDto(city);
         citySearchRepository.save(city);
         return result;
+    }
+
+    private void checkState(CityDTO cityDTO) {
+        this.stateRepository.findById(cityDTO.getStateId())
+            .orElseThrow(() -> new InvalidDataException("The State "+cityDTO.getStateId()+" is invalid", "CITY"));
     }
 
     /**

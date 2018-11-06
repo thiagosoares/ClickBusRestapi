@@ -344,6 +344,34 @@ public class PlaceResourceIntTest {
         // Validate the Place in Elasticsearch
         verify(mockPlaceSearchRepository, times(0)).save(place);
     }
+    
+    @Test
+    @Transactional
+    public void createPlaceWithNonExistingCity() throws Exception {
+    	
+    	// Initialize the database
+        int databaseSizeBeforeCreate = placeRepository.findAll().size();
+
+        // Create the Place with an existing SLUG
+        PlaceDTO placeDTO = placeMapper.toDto(place);
+        placeDTO.setCityId(Long.MAX_VALUE);
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restPlaceMockMvc.perform(post("/api/places")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(placeDTO)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.entityName").value("PLACE"))
+            .andExpect(jsonPath("$.title").value("The City "+Long.MAX_VALUE+" is invalid"));
+
+        // Validate the Place in the database
+        List<Place> placeList = placeRepository.findAll();
+        assertThat(placeList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the Place in Elasticsearch
+        verify(mockPlaceSearchRepository, times(0)).save(place);
+    }
+
 
     @Test
     @Transactional

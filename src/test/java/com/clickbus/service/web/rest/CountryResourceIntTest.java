@@ -159,11 +159,6 @@ public class CountryResourceIntTest {
         verify(mockCountrySearchRepository, times(1)).save(testCountry);
     }
     
-    private void checkDate(Instant date) {
-    	
-    	
-    }
-
     @Test
     @Transactional
     public void createCountryWithExistingId() throws Exception {
@@ -205,7 +200,7 @@ public class CountryResourceIntTest {
         List<Country> countryList = countryRepository.findAll();
         assertThat(countryList).hasSize(databaseSizeBeforeTest);
     }
-
+    
     @Test
     @Transactional
     public void getAllCountries() throws Exception {

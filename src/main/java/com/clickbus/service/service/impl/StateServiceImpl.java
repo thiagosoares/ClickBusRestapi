@@ -69,7 +69,7 @@ public class StateServiceImpl implements StateService {
 
     private void checkCountry(StateDTO stateDTO) {
         this.countryRepository.findById(stateDTO.getCountryId())
-            .orElseThrow(() -> new InvalidDataException("The Country "+stateDTO.getCountryId()+" is invalid", "CITY"));          
+            .orElseThrow(() -> new InvalidDataException("The Country "+stateDTO.getCountryId()+" is invalid", "STATE"));          
     }
 
     /**

@@ -230,6 +230,32 @@ public class CityResourceIntTest {
         List<City> cityList = cityRepository.findAll();
         assertThat(cityList).hasSize(databaseSizeBeforeTest);
     }
+    
+    @Test
+    @Transactional
+    public void createCityWithNonExistingState() throws Exception {
+        int databaseSizeBeforeCreate = cityRepository.findAll().size();
+
+        // Create the City with an existing ID
+        CityDTO cityDTO = cityMapper.toDto(city);
+        
+        cityDTO.setStateId(Long.MAX_VALUE);
+
+        // An entity with an existing ID cannot be created, so this API call must fail
+        restCityMockMvc.perform(post("/api/cities")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(cityDTO)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.entityName").value("CITY"))
+            .andExpect(jsonPath("$.title").value("The State "+Long.MAX_VALUE+" is invalid"));
+
+        // Validate the City in the database
+        List<City> cityList = cityRepository.findAll();
+        assertThat(cityList).hasSize(databaseSizeBeforeCreate);
+
+        // Validate the City in Elasticsearch
+        verify(mockCitySearchRepository, times(0)).save(city);
+    }
 
     @Test
     @Transactional
