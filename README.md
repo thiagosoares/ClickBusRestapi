@@ -184,7 +184,15 @@ Para **produção** é necessário um serviço Elastisearch funcionando e com su
 
 Para otimizar a aplicação para o ambiente de produção, utilize os comando:
 
-    ./mvnw -Pprod clean package
+```
+./mvnw -Pprod clean package
+```
+
+Ou 
+
+```
+./mvnw -Pprod -Pswagger clean package
+```
 
 Ele irá concatenar e minificar todos os CSS e JavaScripts do cliente e atualizar as referências no `index.html`.
 
