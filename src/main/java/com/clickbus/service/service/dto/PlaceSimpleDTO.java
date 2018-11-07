@@ -1,23 +1,15 @@
 package com.clickbus.service.service.dto;
 
-import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.clickbus.service.domain.City;
-import com.clickbus.service.domain.ClientApplication;
 import com.clickbus.service.service.dto.projections.PlaceProjectionsDTO;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * A DTO for the Place entity.

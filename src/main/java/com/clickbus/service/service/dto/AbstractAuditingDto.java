@@ -3,8 +3,6 @@ package com.clickbus.service.service.dto;
 import java.io.Serializable;
 import java.time.Instant;
 
-import org.springframework.cloud.cloudfoundry.com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +14,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//@JsonPropertyOrder({"createdBy", "createdDate", "lastModifiedBy", "lastModifiedDate"})
 public abstract class AbstractAuditingDto implements Serializable {
 
     private static final long serialVersionUID = 1L;

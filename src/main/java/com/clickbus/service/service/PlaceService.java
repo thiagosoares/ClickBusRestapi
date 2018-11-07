@@ -44,8 +44,7 @@ public interface PlaceService {
      * @return the entity
      */
     Optional<PlaceDTO> findOne(Long id);
-    
-    
+        
     /**
      * Get the "slug" place.
      *
@@ -53,8 +52,7 @@ public interface PlaceService {
      * @return the entity
      */
     Optional<PlaceDetailsDTO> findOneBySlug(String slug);
-    
-    
+        
     /**
      * Get the "id" place.
      *
@@ -80,5 +78,8 @@ public interface PlaceService {
      */
     Page<PlaceDTO> search(String query, Pageable pageable);
 
-    public void reindex();
+    /**
+     * Rebuild de indexes for Places
+     */
+    void reindex();
 }

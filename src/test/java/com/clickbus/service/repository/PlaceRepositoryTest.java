@@ -1,24 +1,9 @@
 package com.clickbus.service.repository;
 
-import static org.junit.Assert.fail;
-
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.equalTo;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.clickbus.service.ClickbusApp;
 import com.clickbus.service.domain.City;
@@ -28,6 +13,13 @@ import com.clickbus.service.service.dto.projections.PlaceDetailsDTO;
 import com.clickbus.service.web.rest.CityResourceIntTest;
 import com.clickbus.service.web.rest.CountryResourceIntTest;
 import com.clickbus.service.web.rest.StateResourceIntTest;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 
 @RunWith(SpringRunner.class)

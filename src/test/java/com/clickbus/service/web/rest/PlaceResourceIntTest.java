@@ -20,10 +20,22 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+
+import com.clickbus.service.ClickbusApp;
+import com.clickbus.service.domain.City;
+import com.clickbus.service.domain.ClientApplication;
+import com.clickbus.service.domain.Place;
+import com.clickbus.service.repository.PlaceRepository;
+import com.clickbus.service.repository.search.PlaceSearchRepository;
+import com.clickbus.service.service.ClientApplicationService;
+import com.clickbus.service.service.PlaceService;
+import com.clickbus.service.service.dto.ClientApplicationDTO;
+import com.clickbus.service.service.dto.PlaceDTO;
+import com.clickbus.service.service.mapper.PlaceMapper;
+import com.clickbus.service.web.rest.errors.ExceptionTranslator;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -42,19 +54,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.clickbus.service.ClickbusApp;
-import com.clickbus.service.domain.City;
-import com.clickbus.service.domain.ClientApplication;
-import com.clickbus.service.domain.Place;
-import com.clickbus.service.repository.PlaceRepository;
-import com.clickbus.service.repository.search.PlaceSearchRepository;
-import com.clickbus.service.service.ClientApplicationService;
-import com.clickbus.service.service.PlaceService;
-import com.clickbus.service.service.dto.ClientApplicationDTO;
-import com.clickbus.service.service.dto.PlaceDTO;
-import com.clickbus.service.service.mapper.PlaceMapper;
-import com.clickbus.service.web.rest.errors.ExceptionTranslator;
 
 /**
  * Test class for the PlaceResource REST controller.

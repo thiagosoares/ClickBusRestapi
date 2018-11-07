@@ -7,16 +7,6 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.clickbus.service.domain.Place;
 import com.clickbus.service.repository.CityRepository;
 import com.clickbus.service.repository.ClientApplicationRepository;
@@ -28,9 +18,15 @@ import com.clickbus.service.service.dto.PlaceSimpleDTO;
 import com.clickbus.service.service.dto.projections.PlaceDetailsDTO;
 import com.clickbus.service.service.mapper.PlaceMapper;
 import com.clickbus.service.service.util.SlugUtil;
-import com.clickbus.service.web.rest.errors.BadRequestAlertException;
 import com.clickbus.service.web.rest.errors.InvalidDataException;
-import com.github.vanroy.springdata.jest.JestElasticsearchTemplate;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service Implementation for managing Place.
@@ -51,20 +47,27 @@ public class PlaceServiceImpl implements PlaceService {
 
     private PlaceSearchRepository placeSearchRepository;
 
-	private JestElasticsearchTemplate elasticsearchTemplate;
-
-    public PlaceServiceImpl(PlaceRepository placeRepository,
+	public PlaceServiceImpl(PlaceRepository placeRepository,
                             CityRepository cityRepository,
                             ClientApplicationRepository clientApplicationRepository,
                             PlaceMapper placeMapper,
-                            PlaceSearchRepository placeSearchRepository,
-                            JestElasticsearchTemplate elasticsearchTemplate) {
+                            PlaceSearchRepository placeSearchRepository) {
         this.placeRepository = placeRepository;
         this.cityRepository = cityRepository;
         this.clientApplicationRepository = clientApplicationRepository;
         this.placeMapper = placeMapper;
         this.placeSearchRepository = placeSearchRepository;
-        this.elasticsearchTemplate = elasticsearchTemplate;
+    }
+
+    /**
+     * Make a rebuild from Place indexes whether the indexes are not created
+     */
+    @PostConstruct
+    public void init() {
+        log.debug("Reindexing onInit... ");
+        if (this.placeSearchRepository.count() == 0) {
+            reindex();
+        }
     }
 
     /**
@@ -218,17 +221,6 @@ public class PlaceServiceImpl implements PlaceService {
         log.debug(">> Request to search for a page of Places for query {}", queryStringQuery(query));
         return placeSearchRepository.search(queryStringQuery(query), pageable)
             .map(placeMapper::toDto);
-    }
-
-    /**
-     * Make a rebuild from Place indexes whether the indexes are not created
-     */
-    @PostConstruct
-    public void init() {
-        log.debug("Reindexing onInit... ");
-        if (this.placeSearchRepository.count() == 0) {
-            reindex();
-        }
     }
 
     /**

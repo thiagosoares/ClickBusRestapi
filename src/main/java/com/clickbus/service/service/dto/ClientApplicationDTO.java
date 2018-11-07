@@ -1,7 +1,5 @@
 package com.clickbus.service.service.dto;
 
-import java.time.Instant;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -10,9 +8,7 @@ import org.springframework.cloud.cloudfoundry.com.fasterxml.jackson.annotation.J
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * A DTO for the ClientApplication entity.
