@@ -67,7 +67,7 @@ curl -X GET \
   -H 'Cache-Control: no-cache' \
 ```
 
-Para buscar o **Place** de **ID igual a 1**, use a seguinte requisição
+#### Para buscar o **Place** de **ID igual a 1**, use a seguinte requisição
 
 ```
 curl -X GET \
@@ -93,6 +93,22 @@ curl -X GET \
   http://localhost:8080/api/places/1/clients \
   -H 'Authorization: Bearer TOKEN_ACESSO_AQUI' \
   -H 'Cache-Control: no-cache' \
+```
+
+#### Buscar **Places** por seu **Slug**
+
+```
+curl -X GET \
+  http://localhost:8080/api/_search/places-slug/PL01 \
+  -H 'Authorization: Bearer TOKEN_ACESSO_AQUI' \
+  -H 'Cache-Control: no-cache' \
+```
+ou 
+
+```
+curl -X GET \
+  'http://localhost:8080/api/_search/places?query=slug:pl02' \
+  -H 'Authorization: Bearer TOKEN_ACESSO_AQUI' \
 ```
 
 Muitos outros resources foram criados, confira no [Swagger](http://localhost:8080/#/docs)
