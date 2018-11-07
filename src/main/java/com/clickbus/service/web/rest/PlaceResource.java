@@ -209,4 +209,14 @@ public class PlaceResource {
         return ResponseUtil.wrapOrNotFound(placeDTO);
     }
 
+
+    @GetMapping("/places-reindex")
+    @Timed
+    public ResponseEntity<Void> reindexBase() {
+        log.debug("REST request to reindex the search base");
+        placeService.reindex();
+        return ResponseEntity.ok().build();
+    }
+
+
 }

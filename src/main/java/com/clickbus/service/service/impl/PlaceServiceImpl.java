@@ -2,7 +2,10 @@ package com.clickbus.service.service.impl;
 
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
+import java.util.List;
 import java.util.Optional;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -10,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +30,7 @@ import com.clickbus.service.service.mapper.PlaceMapper;
 import com.clickbus.service.service.util.SlugUtil;
 import com.clickbus.service.web.rest.errors.BadRequestAlertException;
 import com.clickbus.service.web.rest.errors.InvalidDataException;
+import com.github.vanroy.springdata.jest.JestElasticsearchTemplate;
 
 /**
  * Service Implementation for managing Place.
@@ -46,16 +51,20 @@ public class PlaceServiceImpl implements PlaceService {
 
     private PlaceSearchRepository placeSearchRepository;
 
+	private JestElasticsearchTemplate elasticsearchTemplate;
+
     public PlaceServiceImpl(PlaceRepository placeRepository,
                             CityRepository cityRepository,
                             ClientApplicationRepository clientApplicationRepository,
                             PlaceMapper placeMapper,
-                            PlaceSearchRepository placeSearchRepository) {
+                            PlaceSearchRepository placeSearchRepository,
+                            JestElasticsearchTemplate elasticsearchTemplate) {
         this.placeRepository = placeRepository;
         this.cityRepository = cityRepository;
         this.clientApplicationRepository = clientApplicationRepository;
         this.placeMapper = placeMapper;
         this.placeSearchRepository = placeSearchRepository;
+        this.elasticsearchTemplate = elasticsearchTemplate;
     }
 
     /**
@@ -206,8 +215,36 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     @Transactional(readOnly = true)
     public Page<PlaceDTO> search(String query, Pageable pageable) {
-        log.debug("Request to search for a page of Places for query {}", query);
+        log.debug(">> Request to search for a page of Places for query {}", queryStringQuery(query));
         return placeSearchRepository.search(queryStringQuery(query), pageable)
             .map(placeMapper::toDto);
+    }
+
+    /**
+     * Make a rebuild from Place indexes whether the indexes are not created
+     */
+    @PostConstruct
+    public void init() {
+        log.debug("Reindexing onInit... ");
+        if (this.placeSearchRepository.count() == 0) {
+            reindex();
+        }
+    }
+
+    /**
+     * Rebuild de indexes for Places
+     */
+    @Transactional(readOnly = true)
+    public void reindex() {
+
+        log.debug("Reindexing ... ");
+
+        // Isso deveria funcionar ????
+        // placeSearchRepository.refresh();
+        List<Place> list = placeRepository.findAll();
+
+        list.forEach(p -> {
+            this.placeSearchRepository.save(p);
+        });
     }
 }

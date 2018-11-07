@@ -21,6 +21,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -58,6 +59,7 @@ public class Place extends AbstractAuditingEntity {
     @Column(name = "name", length = 255, nullable = false)
     private String name;
       
+    //@Field()
     @NotNull
     @Size(min = 2, max = 255)
     @Column(name = "slug", length = 255, nullable = false, unique = true)

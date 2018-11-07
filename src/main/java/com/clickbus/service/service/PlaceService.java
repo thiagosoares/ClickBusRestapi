@@ -79,4 +79,6 @@ public interface PlaceService {
      * @return the list of entities
      */
     Page<PlaceDTO> search(String query, Pageable pageable);
+
+    public void reindex();
 }
